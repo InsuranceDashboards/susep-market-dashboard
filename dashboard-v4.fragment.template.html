@@ -1,0 +1,2284 @@
+<div id="radar-susep-dashboard-v4" class="r4-root">
+  <style>
+    #radar-susep-dashboard-v4 {
+      --r4-focus: light-dark(#003b70, #6ea8d8);
+      --r4-market: var(--viz-series-3);
+      --r4-rank: var(--viz-series-5);
+      display: grid;
+      gap: 22px;
+      color: var(--foreground);
+      background: transparent;
+      font-variant-numeric: tabular-nums;
+    }
+    #radar-susep-dashboard-v4 * { box-sizing: border-box; }
+    #radar-susep-dashboard-v4 .r4-hero {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.65fr) minmax(240px, .75fr);
+      gap: 28px;
+      padding: 24px 0 8px;
+      border-top: 4px solid var(--r4-focus);
+      overflow: hidden;
+    }
+    #radar-susep-dashboard-v4 .r4-hero::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      right: -120px;
+      top: -170px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--r4-focus) 18%, transparent);
+      pointer-events: none;
+    }
+    #radar-susep-dashboard-v4 .r4-eyebrow { color: var(--muted-foreground); letter-spacing: .11em; text-transform: uppercase; }
+    #radar-susep-dashboard-v4 .r4-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    #radar-susep-dashboard-v4 .r4-language { display: inline-flex; gap: 4px; padding: 3px; border: 1px solid var(--border); border-radius: 999px; }
+    #radar-susep-dashboard-v4 .r4-language button { min-width: 40px; border: 0; border-radius: 999px; padding: 5px 9px; color: var(--muted-foreground); background: transparent; cursor: pointer; }
+    #radar-susep-dashboard-v4 .r4-language button[aria-pressed="true"] { color: var(--primary-foreground); background: var(--primary); }
+    #radar-susep-dashboard-v4 .r4-headline { margin: 8px 0 10px; max-width: 28ch; }
+    #radar-susep-dashboard-v4 .r4-headline strong { color: var(--r4-focus); }
+    #radar-susep-dashboard-v4 .r4-deck { margin: 0; color: var(--muted-foreground); max-width: 78ch; }
+    #radar-susep-dashboard-v4 .r4-stamp { align-self: end; border-left: 1px solid var(--border); padding-left: 20px; }
+    #radar-susep-dashboard-v4 .r4-stamp span { display: block; color: var(--muted-foreground); }
+    #radar-susep-dashboard-v4 .r4-stamp strong { display: block; margin: 6px 0; }
+    #radar-susep-dashboard-v4 .r4-controls-wrap { display: grid; gap: 14px; padding: 18px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    #radar-susep-dashboard-v4 .r4-product-nav { display: grid; gap: 10px; padding: 4px 0 16px; border-bottom: 1px solid var(--border); }
+    #radar-susep-dashboard-v4 .r4-product-tabs,
+    #radar-susep-dashboard-v4 .r4-subproduct-tabs { align-items: center; flex-wrap: wrap; }
+    #radar-susep-dashboard-v4 .r4-product-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
+    #radar-susep-dashboard-v4 .r4-product-meta p,
+    #radar-susep-dashboard-v4 .r4-product-scope { margin: 0; color: var(--muted-foreground); }
+    #radar-susep-dashboard-v4 .r4-controls-title,
+    #radar-susep-dashboard-v4 .r4-section-heading,
+    #radar-susep-dashboard-v4 .r4-branch-head { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
+    #radar-susep-dashboard-v4 .r4-controls-title p,
+    #radar-susep-dashboard-v4 .r4-section-heading p { margin: 0; color: var(--muted-foreground); text-align: right; }
+    #radar-susep-dashboard-v4 .r4-controls { align-items: end; display: grid; grid-template-columns: .95fr .7fr .9fr 1fr 1.35fr; gap: 12px; }
+    #radar-susep-dashboard-v4 .r4-primary-controls { grid-template-columns: .95fr .7fr .9fr 1fr 1.35fr; }
+    #radar-susep-dashboard-v4 .r4-field { min-width: 0; }
+    #radar-susep-dashboard-v4 .r4-field .form-label { margin-bottom: 6px; }
+    #radar-susep-dashboard-v4 .r4-expand-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    #radar-susep-dashboard-v4 .r4-filter-details { border-top: 1px solid var(--border); }
+    #radar-susep-dashboard-v4 .r4-filter-details summary { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding: 12px 0; cursor: pointer; list-style: none; }
+    #radar-susep-dashboard-v4 .r4-filter-details summary::-webkit-details-marker { display: none; }
+    #radar-susep-dashboard-v4 .r4-filter-details summary::after { content: "+"; color: var(--muted-foreground); }
+    #radar-susep-dashboard-v4 .r4-filter-details[open] summary::after { content: "−"; }
+    #radar-susep-dashboard-v4 .r4-filter-details summary span { color: var(--muted-foreground); margin-left: auto; }
+    #radar-susep-dashboard-v4 .r4-filter-body { padding: 0 0 12px; }
+    #radar-susep-dashboard-v4 .r4-company-layout,
+    #radar-susep-dashboard-v4 .r4-branch-layout { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(220px, .75fr); gap: 12px; align-items: stretch; }
+    #radar-susep-dashboard-v4 .r4-company-select,
+    #radar-susep-dashboard-v4 .r4-branch-select { min-height: 126px; }
+    #radar-susep-dashboard-v4 .r4-company-help,
+    #radar-susep-dashboard-v4 .r4-branch-actions { display: grid; align-content: start; gap: 8px; }
+    #radar-susep-dashboard-v4 .r4-company-help p,
+    #radar-susep-dashboard-v4 .r4-branch-actions p { margin: 4px 0 0; color: var(--muted-foreground); }
+    #radar-susep-dashboard-v4 .r4-tabs { border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    #radar-susep-dashboard-v4 .r4-panel { display: grid; gap: 22px; }
+    #radar-susep-dashboard-v4 .r4-panel[hidden] { display: none; }
+    #radar-susep-dashboard-v4 .r4-kpis-block { display: grid; gap: 10px; }
+    #radar-susep-dashboard-v4 .r4-kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    #radar-susep-dashboard-v4 .r4-advanced-kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    #radar-susep-dashboard-v4 .r4-kpis .card,
+    #radar-susep-dashboard-v4 .r4-advanced-kpis .card { min-width: 0; }
+    #radar-susep-dashboard-v4 .r4-kpi-context { margin: 6px 0 0; color: var(--muted-foreground); }
+    #radar-susep-dashboard-v4 .r4-positive { color: var(--green); }
+    #radar-susep-dashboard-v4 .r4-negative { color: var(--red); }
+    #radar-susep-dashboard-v4 .r4-neutral { color: var(--muted-foreground); }
+    #radar-susep-dashboard-v4 .r4-section-heading { align-items: end; margin-bottom: 10px; }
+    #radar-susep-dashboard-v4 .r4-section-heading h2 { margin: 0; }
+    #radar-susep-dashboard-v4 .r4-chart-shell { position: relative; min-width: 0; }
+    #radar-susep-dashboard-v4 .r4-chart-shell svg { display: block; width: 100%; overflow: visible; }
+    #radar-susep-dashboard-v4 .r4-chart-controls { align-items: end; display: grid; grid-template-columns: minmax(180px, 280px); margin-bottom: 8px; }
+    #radar-susep-dashboard-v4 .r4-technical-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+    #radar-susep-dashboard-v4 .r4-ratio-kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    #radar-susep-dashboard-v4 .r4-financial-kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    #radar-susep-dashboard-v4 .r4-ratio-charts { display: grid; grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr); gap: 22px; }
+    #radar-susep-dashboard-v4 .r4-financial-toolbar { display: grid; grid-template-columns: minmax(260px, 1fr) minmax(150px, 220px) minmax(150px, 220px); gap: 14px; align-items: end; }
+    #radar-susep-dashboard-v4 .r4-financial-metrics { align-items: center; }
+    #radar-susep-dashboard-v4 .r4-financial-note { display: flex; justify-content: space-between; gap: 16px; padding-top: 12px; border-top: 1px solid var(--border); color: var(--muted-foreground); }
+    #radar-susep-dashboard-v4 .r4-fin-track { stroke: var(--border); stroke-width: 2; }
+    #radar-susep-dashboard-v4 .r4-fin-dot { fill: var(--background); stroke: var(--r4-market); stroke-width: 3; }
+    #radar-susep-dashboard-v4 .r4-fin-dot-focus { fill: var(--r4-focus); stroke: var(--r4-focus); stroke-width: 3; }
+    #radar-susep-dashboard-v4 .r4-fin-prev { stroke: var(--foreground); stroke-width: 2; }
+    #radar-susep-dashboard-v4 .r4-table-wrap { overflow-x: auto; }
+    #radar-susep-dashboard-v4 .r4-tech-table { width: 100%; border-collapse: collapse; }
+    #radar-susep-dashboard-v4 .r4-tech-table th,
+    #radar-susep-dashboard-v4 .r4-tech-table td { padding: 10px 8px; border-bottom: 1px solid var(--border); text-align: right; white-space: nowrap; }
+    #radar-susep-dashboard-v4 .r4-tech-table th:first-child,
+    #radar-susep-dashboard-v4 .r4-tech-table td:first-child { text-align: left; }
+    #radar-susep-dashboard-v4 .r4-tech-table th { color: var(--muted-foreground); }
+    #radar-susep-dashboard-v4 .r4-tech-table .r4-table-focus { background: color-mix(in srgb, var(--r4-focus) 10%, transparent); }
+    #radar-susep-dashboard-v4 .r4-axis { fill: var(--muted-foreground); }
+    #radar-susep-dashboard-v4 .r4-data-label { paint-order: stroke; stroke: var(--background); stroke-width: 4px; stroke-linejoin: round; }
+    #radar-susep-dashboard-v4 .r4-gridline { stroke: var(--border); stroke-width: 1; }
+    #radar-susep-dashboard-v4 .r4-divider { stroke: var(--border); stroke-width: 1; stroke-dasharray: 4 4; }
+    #radar-susep-dashboard-v4 .r4-market-bar { fill: color-mix(in srgb, var(--r4-market) 36%, var(--muted)); }
+    #radar-susep-dashboard-v4 .r4-market-bar-compare { fill: color-mix(in srgb, var(--r4-market) 12%, var(--muted)); stroke: var(--r4-market); stroke-width: 2; }
+    #radar-susep-dashboard-v4 .r4-market-bar-selected { fill: color-mix(in srgb, var(--r4-focus) 30%, var(--muted)); stroke: var(--r4-focus); stroke-width: 2; }
+    #radar-susep-dashboard-v4 .r4-focus-premium-bar { fill: var(--r4-focus); }
+    #radar-susep-dashboard-v4 .r4-focus-premium-bar-selected { fill: var(--r4-focus); stroke: var(--foreground); stroke-width: 2; }
+    #radar-susep-dashboard-v4 .r4-share-line { fill: none; stroke: var(--r4-focus); stroke-width: 3; }
+    #radar-susep-dashboard-v4 .r4-share-dot { fill: var(--background); stroke: var(--r4-focus); stroke-width: 3; }
+    #radar-susep-dashboard-v4 .r4-share-dot-selected { fill: var(--r4-focus); }
+    #radar-susep-dashboard-v4 .r4-position-line { fill: none; stroke: var(--r4-rank); stroke-width: 3; }
+    #radar-susep-dashboard-v4 .r4-position-dot { fill: var(--background); stroke: var(--r4-rank); stroke-width: 3; }
+    #radar-susep-dashboard-v4 .r4-position-dot-selected { fill: var(--r4-rank); }
+    #radar-susep-dashboard-v4 .r4-rank-track { fill: color-mix(in srgb, var(--muted) 64%, transparent); }
+    #radar-susep-dashboard-v4 .r4-rank-bar { fill: color-mix(in srgb, var(--r4-market) 74%, var(--muted)); }
+    #radar-susep-dashboard-v4 .r4-rank-bar-focus { fill: var(--r4-focus); }
+    #radar-susep-dashboard-v4 .r4-prev-marker { stroke: var(--foreground); stroke-width: 2; }
+    #radar-susep-dashboard-v4 .r4-focus-band { fill: color-mix(in srgb, var(--r4-focus) 11%, transparent); }
+    #radar-susep-dashboard-v4 .r4-tech-focus-line { fill: none; stroke: var(--r4-focus); stroke-width: 3; }
+    #radar-susep-dashboard-v4 .r4-tech-market-line { fill: none; stroke: var(--r4-market); stroke-width: 2; stroke-dasharray: 6 4; }
+    #radar-susep-dashboard-v4 .r4-tech-secondary-line { fill: none; stroke: var(--r4-rank); stroke-width: 2; }
+    #radar-susep-dashboard-v4 .r4-tech-focus-dot { fill: var(--background); stroke: var(--r4-focus); stroke-width: 3; }
+    #radar-susep-dashboard-v4 .r4-tech-market-dot { fill: var(--background); stroke: var(--r4-market); stroke-width: 2; }
+    #radar-susep-dashboard-v4 .r4-tech-bar { fill: color-mix(in srgb, var(--r4-focus) 28%, var(--muted)); stroke: var(--r4-focus); stroke-width: 1.5; }
+    #radar-susep-dashboard-v4 .r4-compare-bar { fill: color-mix(in srgb, var(--r4-market) 38%, var(--muted)); }
+    #radar-susep-dashboard-v4 .r4-ratio-focus-link { stroke: var(--r4-focus); stroke-width: 3; }
+    #radar-susep-dashboard-v4 .r4-ratio-market-link { stroke: var(--r4-market); stroke-width: 2; stroke-dasharray: 5 4; }
+    #radar-susep-dashboard-v4 .r4-ratio-focus-gross { fill: var(--background); stroke: var(--r4-focus); stroke-width: 3; }
+    #radar-susep-dashboard-v4 .r4-ratio-focus-net { fill: var(--r4-focus); stroke: var(--r4-focus); stroke-width: 2; }
+    #radar-susep-dashboard-v4 .r4-ratio-market-gross { fill: var(--background); stroke: var(--r4-market); stroke-width: 2; }
+    #radar-susep-dashboard-v4 .r4-ratio-market-net { fill: var(--r4-market); stroke: var(--r4-market); stroke-width: 1; }
+    #radar-susep-dashboard-v4 .r4-mix-track { fill: color-mix(in srgb, var(--muted) 64%, transparent); }
+    #radar-susep-dashboard-v4 .r4-mix-bar { fill: color-mix(in srgb, var(--r4-market) 76%, var(--muted)); }
+    #radar-susep-dashboard-v4 .r4-mix-focus { fill: var(--r4-focus); stroke: var(--background); stroke-width: 2; }
+    #radar-susep-dashboard-v4 .r4-insights { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    #radar-susep-dashboard-v4 .r4-insight { padding: 17px 20px 17px 0; }
+    #radar-susep-dashboard-v4 .r4-insight + .r4-insight { border-left: 1px solid var(--border); padding-left: 20px; }
+    #radar-susep-dashboard-v4 .r4-insight strong { display: block; margin-bottom: 6px; }
+    #radar-susep-dashboard-v4 .r4-insight p { margin: 0; color: var(--muted-foreground); }
+    #radar-susep-dashboard-v4 .r4-footnote { padding-top: 4px; border-top: 1px solid var(--border); color: var(--muted-foreground); }
+    #radar-susep-dashboard-v4 .r4-empty { padding: 34px 0; color: var(--muted-foreground); text-align: center; }
+    @media (max-width: 980px) {
+      #radar-susep-dashboard-v4 .r4-controls { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      #radar-susep-dashboard-v4 .r4-technical-charts { grid-template-columns: 1fr; }
+      #radar-susep-dashboard-v4 .r4-ratio-charts { grid-template-columns: 1fr; }
+      #radar-susep-dashboard-v4 .r4-advanced-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #radar-susep-dashboard-v4 .r4-ratio-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #radar-susep-dashboard-v4 .r4-financial-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 760px) {
+      #radar-susep-dashboard-v4 .r4-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #radar-susep-dashboard-v4 .r4-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 620px) {
+      #radar-susep-dashboard-v4 { gap: 18px; }
+      #radar-susep-dashboard-v4 .r4-hero { grid-template-columns: 1fr; gap: 14px; padding-top: 18px; }
+      #radar-susep-dashboard-v4 .r4-stamp { border-left: 0; border-top: 1px solid var(--border); padding: 12px 0 0; }
+      #radar-susep-dashboard-v4 .r4-kpis,
+      #radar-susep-dashboard-v4 .r4-advanced-kpis,
+      #radar-susep-dashboard-v4 .r4-financial-kpis,
+      #radar-susep-dashboard-v4 .r4-controls,
+      #radar-susep-dashboard-v4 .r4-company-layout,
+      #radar-susep-dashboard-v4 .r4-branch-layout,
+      #radar-susep-dashboard-v4 .r4-expand-grid,
+      #radar-susep-dashboard-v4 .r4-insights { grid-template-columns: 1fr; }
+      #radar-susep-dashboard-v4 .r4-financial-toolbar { grid-template-columns: 1fr; }
+      #radar-susep-dashboard-v4 .r4-financial-note { flex-direction: column; }
+      #radar-susep-dashboard-v4 .r4-controls-title,
+      #radar-susep-dashboard-v4 .r4-section-heading,
+      #radar-susep-dashboard-v4 .r4-product-meta { align-items: start; flex-direction: column; }
+      #radar-susep-dashboard-v4 .r4-controls-title p,
+      #radar-susep-dashboard-v4 .r4-section-heading p { text-align: left; }
+      #radar-susep-dashboard-v4 .r4-insight { padding: 15px 0; }
+      #radar-susep-dashboard-v4 .r4-insight + .r4-insight { border-left: 0; border-top: 1px solid var(--border); padding-left: 0; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      #radar-susep-dashboard-v4 .r4-share-line,
+      #radar-susep-dashboard-v4 .r4-share-dot,
+      #radar-susep-dashboard-v4 .r4-position-line,
+      #radar-susep-dashboard-v4 .r4-position-dot,
+      #radar-susep-dashboard-v4 .r4-rank-bar { transition: all 220ms ease; }
+    }
+  </style>
+
+  <section class="r4-hero" aria-labelledby="r4-headline">
+    <div>
+      <div class="r4-hero-top">
+        <div class="r4-eyebrow text-small">Radar do mercado segurador brasileiro · Dados públicos SES/SUSEP</div>
+        <div class="r4-language" role="group" aria-label="Idioma do dashboard">
+          <button id="r4-lang-pt" type="button" aria-pressed="true">PT</button>
+          <button id="r4-lang-en" type="button" aria-pressed="false">EN</button>
+        </div>
+      </div>
+      <h1 id="r4-headline" class="r4-headline"><span id="r4-market-direction">Panorama do mercado.</span> <strong id="r4-focus-direction">Seguradora em foco.</strong></h1>
+      <p id="r4-deck" class="r4-deck">Leitura consolidada dos ramos selecionados, agora com visão anual, mensal e acumulada desde 2019.</p>
+    </div>
+    <div class="r4-stamp" aria-live="polite">
+      <span class="text-small">BASE OFICIAL DISPONÍVEL ATÉ</span>
+      <strong id="r4-latest-period">06/2026</strong>
+      <span id="r4-focus-period" class="text-small">1º semestre de 2026 × 1º semestre de 2025</span>
+    </div>
+  </section>
+
+  <section class="r4-product-nav" aria-labelledby="r4-products-heading">
+    <div class="r4-product-meta">
+      <strong id="r4-products-heading">Produtos</strong>
+      <p class="text-small">Taxonomia baseada nas abas da análise de mercado</p>
+    </div>
+    <nav id="r4-product-tabs" class="viz-row r4-product-tabs" role="tablist" aria-label="Produtos do mercado"></nav>
+    <div class="r4-product-meta">
+      <strong class="text-small">Subprodutos</strong>
+      <p id="r4-product-description" class="text-small">—</p>
+    </div>
+    <nav id="r4-subproduct-tabs" class="viz-row r4-subproduct-tabs" role="tablist" aria-label="Subprodutos do produto selecionado"></nav>
+    <p id="r4-product-scope" class="r4-product-scope text-small">—</p>
+  </section>
+
+  <section class="r4-kpis-block" aria-labelledby="r4-kpis-heading">
+    <div class="r4-section-heading">
+      <h2 id="r4-kpis-heading">KPIs executivos</h2>
+      <p class="text-small">Indicadores do painel original · sempre visíveis</p>
+    </div>
+    <div class="viz-grid r4-kpis">
+      <div class="card viz-stat">
+        <span id="r4-kpi-market-label" class="text-muted text-small">MERCADO · PRÊMIO EMITIDO</span>
+        <div id="r4-kpi-market" class="viz-stat-value">—</div>
+        <p id="r4-kpi-market-delta" class="r4-kpi-context text-small">—</p>
+      </div>
+      <div class="card viz-stat">
+        <span id="r4-kpi-focus-label" class="text-muted text-small">SEGURADORA FOCO · PRÊMIO EMITIDO</span>
+        <div id="r4-kpi-focus" class="viz-stat-value">—</div>
+        <p id="r4-kpi-focus-delta" class="r4-kpi-context text-small">—</p>
+      </div>
+      <div class="card viz-stat">
+        <span class="text-muted text-small">POSIÇÃO · PARTICIPAÇÃO</span>
+        <div id="r4-kpi-position" class="viz-stat-value">—</div>
+        <p id="r4-kpi-position-delta" class="r4-kpi-context text-small">—</p>
+      </div>
+      <div class="card viz-stat">
+        <span class="text-muted text-small">SINISTRALIDADE</span>
+        <div id="r4-kpi-loss" class="viz-stat-value">—</div>
+        <p id="r4-kpi-loss-delta" class="r4-kpi-context text-small">—</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="r4-controls-wrap" aria-labelledby="r4-controls-heading">
+    <div class="r4-controls-title">
+      <strong id="r4-controls-heading">Recorte executivo</strong>
+      <p id="r4-selection-summary" class="text-small">2 ramos selecionados · visão consolidada</p>
+    </div>
+    <div class="viz-controls r4-controls r4-primary-controls">
+      <div class="r4-field">
+        <label class="form-label text-small" for="r4-view-mode">Visão temporal</label>
+        <select id="r4-view-mode" class="form-select">
+          <option value="annual" selected>Anual</option>
+          <option value="monthly">Mês isolado</option>
+          <option value="ytd">Acumulado no ano</option>
+        </select>
+      </div>
+      <div class="r4-field">
+        <label class="form-label text-small" for="r4-year">Ano</label>
+        <select id="r4-year" class="form-select"></select>
+      </div>
+      <div class="r4-field">
+        <label class="form-label text-small" for="r4-month">Mês</label>
+        <select id="r4-month" class="form-select"></select>
+      </div>
+      <div class="r4-field">
+        <label class="form-label text-small" for="r4-metric">Métrica principal</label>
+        <select id="r4-metric" class="form-select">
+          <option value="issued">Prêmio emitido</option>
+          <option value="direct">Prêmio direto</option>
+          <option value="earned">Prêmio ganho</option>
+        </select>
+      </div>
+      <div class="r4-field">
+        <label class="form-label text-small" for="r4-focus-company">Seguradora Foco</label>
+        <select id="r4-focus-company" class="form-select"></select>
+      </div>
+    </div>
+    <div class="r4-expand-grid">
+      <details class="r4-filter-details">
+        <summary><strong>Grupo econômico</strong><span id="r4-company-count" class="text-small">1 selecionada</span></summary>
+        <div class="r4-filter-body r4-company-layout">
+          <div class="r4-field">
+            <label class="form-label text-small" for="r4-company">Selecione uma ou mais seguradoras</label>
+            <select id="r4-company" class="form-select r4-company-select" multiple size="5" aria-describedby="r4-company-help"></select>
+          </div>
+          <div class="r4-company-help">
+            <p id="r4-company-help" class="text-small">Use Ctrl/Cmd para combinar seguradoras. A Seguradora Foco permanece como referência individual; as integrantes são consolidadas como grupo.</p>
+          </div>
+        </div>
+      </details>
+      <details class="r4-filter-details">
+        <summary><strong>Ramos SUSEP</strong><span id="r4-branch-count" class="text-small">2 selecionados</span></summary>
+        <div class="r4-filter-body r4-branch-layout">
+          <div class="r4-field">
+            <label class="form-label text-small" for="r4-branches">Selecione um ou mais ramos</label>
+            <select id="r4-branches" class="form-select r4-branch-select" multiple size="5" aria-describedby="r4-branch-help"></select>
+          </div>
+          <div class="r4-branch-actions">
+            <button id="r4-select-all" class="btn" type="button">Selecionar todos os ramos</button>
+            <p id="r4-branch-help" class="text-small">Use Ctrl/Cmd para combinar ramos. Os resultados são consolidados.</p>
+          </div>
+        </div>
+      </details>
+    </div>
+    <div class="viz-controls r4-controls">
+      <div class="r4-field">
+        <label class="form-label text-small" for="r4-top">Ranking</label>
+        <select id="r4-top" class="form-select">
+          <option value="all">Mostrar todos</option>
+          <option value="10">Top 10</option>
+          <option value="12" selected>Top 12</option>
+          <option value="15">Top 15</option>
+          <option value="20">Top 20</option>
+        </select>
+      </div>
+      <div class="r4-field">
+        <label class="form-label text-small" for="r4-min-premium">Prêmio mínimo no ranking</label>
+        <select id="r4-min-premium" class="form-select">
+          <option value="0">Sem mínimo</option>
+          <option value="10000000">R$ 10 milhões</option>
+          <option value="50000000">R$ 50 milhões</option>
+          <option value="100000000">R$ 100 milhões</option>
+          <option value="500000000">R$ 500 milhões</option>
+          <option value="1000000000">R$ 1 bilhão</option>
+        </select>
+      </div>
+      <div class="r4-field">
+        <label class="form-label text-small" for="r4-loss-cap">Sinistralidade máxima no ranking</label>
+        <select id="r4-loss-cap" class="form-select">
+          <option value="all">Todas</option>
+          <option value="0.25">Até 25%</option>
+          <option value="0.50">Até 50%</option>
+          <option value="1">Até 100%</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <nav class="viz-row r4-tabs" role="tablist" aria-label="Áreas do dashboard">
+    <button id="r4-tab-executive" class="btn btn-primary" type="button" role="tab" aria-selected="true" aria-controls="r4-panel-executive">Visão executiva</button>
+    <button id="r4-tab-kpis" class="btn" type="button" role="tab" aria-selected="false" aria-controls="r4-panel-kpis">KPIs avançados</button>
+    <button id="r4-tab-ratios" class="btn" type="button" role="tab" aria-selected="false" aria-controls="r4-panel-ratios">Performance técnica</button>
+    <button id="r4-tab-products" class="btn" type="button" role="tab" aria-selected="false" aria-controls="r4-panel-products">Mix de subprodutos</button>
+    <button id="r4-tab-financial" class="btn" type="button" role="tab" aria-selected="false" aria-controls="r4-panel-financial">Financial Rankings</button>
+  </nav>
+
+  <div id="r4-panel-executive" class="r4-panel" role="tabpanel" aria-labelledby="r4-tab-executive">
+    <section aria-labelledby="r4-trend-title">
+      <div class="r4-section-heading">
+        <h2 id="r4-trend-title">Escala do mercado × participação × posição</h2>
+        <p id="r4-trend-subtitle" class="text-small">Barras: mercado e seguradora foco · linhas: participação e posição</p>
+      </div>
+      <div id="r4-trend-chart" class="r4-chart-shell"></div>
+    </section>
+
+    <section aria-labelledby="r4-ranking-title">
+      <div class="r4-section-heading">
+        <h2 id="r4-ranking-title">Ranking competitivo</h2>
+        <p id="r4-ranking-subtitle" class="text-small">Barra: período atual · marca: período comparável · rótulo: crescimento e sinistralidade</p>
+      </div>
+      <div id="r4-ranking-chart" class="r4-chart-shell"></div>
+      <p id="r4-concentration" class="text-small text-muted"></p>
+    </section>
+
+    <section class="r4-insights" aria-label="Leituras executivas">
+      <article class="r4-insight"><strong id="r4-insight-1-title">Gap de crescimento</strong><p id="r4-insight-1">—</p></article>
+      <article class="r4-insight"><strong id="r4-insight-2-title">Representatividade</strong><p id="r4-insight-2">—</p></article>
+      <article class="r4-insight"><strong id="r4-insight-3-title">Leitura de risco</strong><p id="r4-insight-3">—</p></article>
+    </section>
+  </div>
+
+  <div id="r4-panel-kpis" class="r4-panel" role="tabpanel" aria-labelledby="r4-tab-kpis" hidden>
+    <div class="r4-section-heading">
+      <h2>Indicadores técnicos e de resseguro</h2>
+      <p id="r4-advanced-subtitle" class="text-small">Seguradora foco · período e ramos selecionados</p>
+    </div>
+    <section class="viz-grid r4-advanced-kpis" aria-label="Indicadores avançados">
+      <div class="card viz-stat"><span class="text-muted text-small">SINISTRO OCORRIDO</span><div id="r4-adv-claims" class="viz-stat-value">—</div><p id="r4-adv-claims-context" class="r4-kpi-context text-small">—</p></div>
+      <div class="card viz-stat"><span class="text-muted text-small">SINISTRO LÍQUIDO DE RECUPERAÇÃO</span><div id="r4-adv-net-claims" class="viz-stat-value">—</div><p id="r4-adv-net-claims-context" class="r4-kpi-context text-small">—</p></div>
+      <div class="card viz-stat"><span class="text-muted text-small">DESPESA DE RESSEGURO</span><div id="r4-adv-reins-expense" class="viz-stat-value">—</div><p id="r4-adv-reins-expense-context" class="r4-kpi-context text-small">—</p></div>
+      <div class="card viz-stat"><span class="text-muted text-small">RECEITA DE RESSEGURO</span><div id="r4-adv-reins-revenue" class="viz-stat-value">—</div><p id="r4-adv-reins-revenue-context" class="r4-kpi-context text-small">—</p></div>
+      <div class="card viz-stat"><span class="text-muted text-small">DESPESA COMERCIAL</span><div id="r4-adv-commercial" class="viz-stat-value">—</div><p id="r4-adv-commercial-context" class="r4-kpi-context text-small">—</p></div>
+      <div class="card viz-stat"><span class="text-muted text-small">RVNE</span><div id="r4-adv-rvne" class="viz-stat-value">—</div><p id="r4-adv-rvne-context" class="r4-kpi-context text-small">—</p></div>
+      <div class="card viz-stat"><span class="text-muted text-small">CESSÃO / PRÊMIO EMITIDO</span><div id="r4-adv-cession" class="viz-stat-value">—</div><p id="r4-adv-cession-context" class="r4-kpi-context text-small">—</p></div>
+      <div class="card viz-stat"><span class="text-muted text-small">COMISSÃO / PRÊMIO EMITIDO</span><div id="r4-adv-commission" class="viz-stat-value">—</div><p id="r4-adv-commission-context" class="r4-kpi-context text-small">—</p></div>
+    </section>
+    <section class="r4-technical-charts" aria-label="Gráficos técnicos e de resseguro">
+      <div>
+        <div class="r4-section-heading">
+          <h2>Desempenho técnico</h2>
+          <p id="r4-technical-subtitle" class="text-small">Série histórica da seleção × mercado</p>
+        </div>
+        <div class="r4-chart-controls">
+          <div class="r4-field">
+            <label class="form-label text-small" for="r4-technical-view">Indicador</label>
+            <select id="r4-technical-view" class="form-select">
+              <option value="loss">Sinistralidade</option>
+              <option value="amounts">Prêmio ganho e sinistros</option>
+            </select>
+          </div>
+        </div>
+        <div id="r4-technical-chart" class="r4-chart-shell"></div>
+      </div>
+      <div>
+        <div class="r4-section-heading">
+          <h2>Estrutura de resseguro</h2>
+          <p id="r4-reinsurance-subtitle" class="text-small">Seleção × mercado no período</p>
+        </div>
+        <div class="r4-chart-controls">
+          <div class="r4-field">
+            <label class="form-label text-small" for="r4-reinsurance-view">Visualização</label>
+            <select id="r4-reinsurance-view" class="form-select">
+              <option value="ratios">Índices sobre prêmio emitido</option>
+              <option value="amounts">Valores monetários</option>
+            </select>
+          </div>
+        </div>
+        <div id="r4-reinsurance-chart" class="r4-chart-shell"></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="r4-panel-ratios" class="r4-panel" role="tabpanel" aria-labelledby="r4-tab-ratios" hidden>
+    <div class="r4-section-heading">
+      <h2>Ficha técnica do produto</h2>
+      <p id="r4-ratio-subtitle" class="text-small">Índices brutos e líquidos estimados · seleção × mercado</p>
+    </div>
+    <section class="viz-grid r4-ratio-kpis" aria-label="Indicadores técnicos do produto">
+      <div class="card viz-stat"><span class="text-muted text-small">COMPOSITE BRUTO</span><div id="r4-gross-composite" class="viz-stat-value">—</div><p id="r4-gross-composite-context" class="r4-kpi-context text-small">—</p></div>
+      <div class="card viz-stat"><span class="text-muted text-small">COMPOSITE LÍQUIDO ESTIMADO</span><div id="r4-net-composite" class="viz-stat-value">—</div><p id="r4-net-composite-context" class="r4-kpi-context text-small">—</p></div>
+      <div class="card viz-stat"><span class="text-muted text-small">RETENÇÃO ESTIMADA</span><div id="r4-estimated-retention" class="viz-stat-value">—</div><p id="r4-estimated-retention-context" class="r4-kpi-context text-small">—</p></div>
+      <div class="card viz-stat"><span class="text-muted text-small">RESULTADO TÉCNICO LÍQUIDO</span><div id="r4-net-technical-result" class="viz-stat-value">—</div><p id="r4-net-technical-result-context" class="r4-kpi-context text-small">1 − composite líquido estimado</p></div>
+    </section>
+    <section class="r4-ratio-charts" aria-label="Gráficos de índices técnicos por produto">
+      <div>
+        <div class="r4-section-heading">
+          <h2>Gross × Net Ratios</h2>
+          <p id="r4-gross-net-subtitle" class="text-small">Claims, Comm e Composite</p>
+        </div>
+        <div id="r4-gross-net-chart" class="r4-chart-shell"></div>
+      </div>
+      <div>
+        <div class="r4-section-heading">
+          <h2>Evolução técnica</h2>
+          <p id="r4-ratio-history-subtitle" class="text-small">Seleção × mercado</p>
+        </div>
+        <div class="r4-chart-controls">
+          <div class="r4-field">
+            <label class="form-label text-small" for="r4-ratio-history-view">Indicador</label>
+            <select id="r4-ratio-history-view" class="form-select">
+              <option value="grossComposite">Composite bruto</option>
+              <option value="netComposite">Composite líquido estimado</option>
+              <option value="grossClaims">Claims bruto</option>
+              <option value="netClaims">Claims líquido estimado</option>
+              <option value="grossComm">Comm bruto</option>
+              <option value="netComm">Comm líquido estimado</option>
+              <option value="retention">Retenção estimada</option>
+            </select>
+          </div>
+        </div>
+        <div id="r4-ratio-history-chart" class="r4-chart-shell"></div>
+      </div>
+    </section>
+    <section aria-labelledby="r4-technical-ranking-title">
+      <div class="r4-section-heading">
+        <h2 id="r4-technical-ranking-title">Ranking técnico do produto</h2>
+        <p id="r4-technical-ranking-subtitle" class="text-small">Ordenado pela métrica principal · nomes sem código SUSEP</p>
+      </div>
+      <div class="r4-table-wrap">
+        <table class="r4-tech-table text-small">
+          <thead><tr><th>Seguradora / grupo</th><th>Prêmio emitido</th><th>Retenção</th><th>Claims bruto</th><th>Comm bruto</th><th>Composite bruto</th><th>Claims líquido</th><th>Comm líquido</th><th>Composite líquido</th></tr></thead>
+          <tbody id="r4-technical-ranking-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div id="r4-panel-products" class="r4-panel" role="tabpanel" aria-labelledby="r4-tab-products" hidden>
+    <section aria-labelledby="r4-product-mix-title">
+      <div class="r4-section-heading">
+        <h2 id="r4-product-mix-title">Mix de subprodutos</h2>
+        <p id="r4-product-mix-subtitle" class="text-small">Participação no produto · mercado × seleção</p>
+      </div>
+      <div id="r4-product-mix-chart" class="r4-chart-shell"></div>
+    </section>
+  </div>
+
+  <div id="r4-panel-financial" class="r4-panel" role="tabpanel" aria-labelledby="r4-tab-financial" hidden>
+    <div class="r4-section-heading">
+      <h2>Financial Rankings</h2>
+      <p id="r4-financial-subtitle" class="text-small">Balanço SES · visão YTD por grupo econômico</p>
+    </div>
+    <section class="viz-grid r4-financial-kpis" aria-label="Posições financeiras da seguradora foco">
+      <div class="card viz-stat"><span class="text-muted text-small">PRÊMIO EMITIDO</span><div id="r4-fin-premium" class="viz-stat-value">—</div><p id="r4-fin-premium-context" class="r4-kpi-context text-small">—</p></div>
+      <div class="card viz-stat"><span class="text-muted text-small">ÍNDICE COMBINADO</span><div id="r4-fin-combined" class="viz-stat-value">—</div><p id="r4-fin-combined-context" class="r4-kpi-context text-small">—</p></div>
+      <div class="card viz-stat"><span class="text-muted text-small">LUCRO LÍQUIDO</span><div id="r4-fin-profit" class="viz-stat-value">—</div><p id="r4-fin-profit-context" class="r4-kpi-context text-small">—</p></div>
+      <div class="card viz-stat"><span class="text-muted text-small">ROE ANUALIZADO</span><div id="r4-fin-roe" class="viz-stat-value">—</div><p id="r4-fin-roe-context" class="r4-kpi-context text-small">—</p></div>
+    </section>
+    <section aria-labelledby="r4-financial-ranking-title">
+      <div class="r4-section-heading">
+        <h2 id="r4-financial-ranking-title">Ranking geral</h2>
+        <p id="r4-financial-ranking-subtitle" class="text-small">Ponto: período atual · marca: mesmo período do ano anterior</p>
+      </div>
+      <div class="r4-financial-toolbar">
+        <div>
+          <span class="form-label text-small">Indicador do ranking</span>
+          <div id="r4-financial-metrics" class="viz-row r4-financial-metrics" role="group" aria-label="Indicador financeiro">
+            <button class="btn btn-primary" type="button" data-financial-metric="premium">Prêmio emitido</button>
+            <button class="btn" type="button" data-financial-metric="combined">Índice combinado</button>
+            <button class="btn" type="button" data-financial-metric="profit">Lucro líquido</button>
+            <button class="btn" type="button" data-financial-metric="roe">ROE</button>
+          </div>
+        </div>
+        <div class="r4-field">
+          <label class="form-label text-small" for="r4-financial-universe">Universo do ranking</label>
+          <select id="r4-financial-universe" class="form-select">
+            <option value="50" selected>50 maiores grupos</option>
+            <option value="all">Todos os grupos</option>
+          </select>
+        </div>
+        <div class="r4-field">
+          <label class="form-label text-small" for="r4-financial-top">Quantidade exibida</label>
+          <select id="r4-financial-top" class="form-select">
+            <option value="10">Top 10</option>
+            <option value="20" selected>Top 20</option>
+            <option value="50">Top 50</option>
+            <option value="all">Mostrar todos</option>
+          </select>
+        </div>
+      </div>
+      <div id="r4-financial-chart" class="r4-chart-shell"></div>
+      <div class="r4-financial-note text-small">
+        <span id="r4-financial-market">—</span>
+        <span id="r4-financial-method">—</span>
+      </div>
+    </section>
+  </div>
+
+  <footer id="r4-footnote" class="r4-footnote text-small">
+    <strong>Fonte dos dados:</strong> Sistema de Estatísticas da SUSEP (SES), base FIP. Painel independente elaborado a partir de dados públicos; não possui vínculo, chancela, patrocínio ou validação da SUSEP. Os dados podem ser revisados ou republicados pela fonte oficial. Indicadores e rankings são cálculos do painel. Valores nominais. Prêmio emitido da visão de produtos corresponde a premio_emitido2; o ranking financeiro utiliza a conta 6183 do quadro 23. Índice combinado = −(sinistros ocorridos + custos de aquisição + outras receitas/despesas operacionais + resultado com resseguro + despesas administrativas + tributos) ÷ prêmios ganhos. ROE anualizado = lucro líquido YTD × 12 ÷ mês de referência ÷ patrimônio líquido de fechamento. Claims, Comm, Composite e retenção seguem as fórmulas descritas neste painel. Grupos 01225/99999 são apresentados por companhia para não consolidar entidades independentes.
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+      const root = document.getElementById("radar-susep-dashboard-v4");
+      if (!root) return;
+
+      const DATA = __SES_DATA__;
+      const UI_LANG = new URLSearchParams(window.location.search).get("lang") === "en" ? "en" : "pt";
+      const UI_LOCALE = UI_LANG === "en" ? "en-US" : "pt-BR";
+      const monthNames = UI_LANG === "en"
+        ? ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+        : ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+      const monthShort = UI_LANG === "en"
+        ? ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        : ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+      const metricDefs = {
+        direct: { offset: 0, label: "Prêmio direto", noun: "direto" },
+        issued: { offset: 1, label: "Prêmio emitido", noun: "emitido" },
+        earned: { offset: 2, label: "Prêmio ganho", noun: "ganho" }
+      };
+      const monthIndexById = new Map(DATA.months.map((item, index) => [item, index]));
+      const rowsByMonth = DATA.months.map(() => []);
+      DATA.rows.forEach(row => rowsByMonth[row[0]].push(row));
+      const companyByIndex = DATA.companies.map((item, index) => ({ index, code: item[0], name: item[1], aggregateMarket: String(item[0]).startsWith("__") }));
+      const branchByIndex = DATA.branches.map((item, index) => ({ index, code: item[0], name: item[1] }));
+      const companyIndexByCode = new Map(companyByIndex.map(item => [item.code, item.index]));
+      const branchIndexByCode = new Map(branchByIndex.map(item => [item.code, item.index]));
+      const financialData = DATA.financial || { groups: [], rows: [], companyGroups: [] };
+      const financialGroups = (financialData.groups || []).map((item, index) => ({ index, key: item[0], name: item[1] }));
+      const financialRowsByMonth = DATA.months.map(() => []);
+      (financialData.rows || []).forEach(row => {
+        if (financialRowsByMonth[row[0]]) financialRowsByMonth[row[0]].push(row);
+      });
+      const financialMetricDefs = {
+        premium: { label: "Prêmio emitido", direction: -1, format: value => money(value) },
+        combined: { label: "Índice combinado", direction: 1, format: value => pct(value, 1) },
+        profit: { label: "Lucro líquido", direction: -1, format: value => money(value) },
+        roe: { label: "ROE anualizado", direction: -1, format: value => pct(value, 1) }
+      };
+      const products = Array.isArray(DATA.products) ? DATA.products : [];
+      const productById = new Map(products.map(item => [item.id, item]));
+      const latestYear = Number(DATA.meta.latest.slice(0, 4));
+      const latestMonth = Number(DATA.meta.latest.slice(4, 6));
+      const startYear = Number(DATA.meta.startYear);
+      const defaultFocusCompany = companyIndexByCode.get(DATA.meta.focusCode);
+      const defaultProduct = productById.get("surety") || products[0] || null;
+      const defaultSubproduct = defaultProduct ? (defaultProduct.subproducts.find(item => item.id === defaultProduct.defaultSubproduct) || defaultProduct.subproducts[0]) : null;
+      const branchIndices = codes => new Set((codes || []).map(code => branchIndexByCode.get(code)).filter(value => value != null));
+      const state = {
+        mode: "annual",
+        year: latestYear,
+        month: latestMonth,
+        metric: "issued",
+        focusCompany: defaultFocusCompany,
+        companies: new Set([defaultFocusCompany].filter(value => value != null)),
+        branches: defaultSubproduct ? branchIndices(defaultSubproduct.codes) : new Set([branchIndexByCode.get("0775"), branchIndexByCode.get("0776")].filter(value => value != null)),
+        productId: defaultProduct ? defaultProduct.id : null,
+        subproductId: defaultSubproduct ? defaultSubproduct.id : null,
+        top: 12,
+        minPremium: 0,
+        lossCap: Infinity,
+        technicalView: "loss",
+        reinsuranceView: "ratios",
+        ratioHistoryView: "grossComposite",
+        financialMetric: "premium",
+        financialUniverse: 50,
+        financialTop: 20,
+        tab: "executive"
+      };
+      const aggregateCache = new Map();
+      const el = id => root.querySelector("#" + id);
+      const metric = () => metricDefs[state.metric];
+      const currentProduct = () => productById.get(state.productId) || null;
+      const currentSubproduct = () => {
+        const product = currentProduct();
+        return product && state.subproductId ? product.subproducts.find(item => item.id === state.subproductId) || null : null;
+      };
+      const companyDisplayName = company => company ? company.name.replace(/\s*·\s*\d+\s*$/, "") : "Seguradora";
+      const selectedCompanyIndices = () => Array.from(state.companies).sort((a, b) => a - b);
+      const focusCompanyName = () => companyDisplayName(companyByIndex[state.focusCompany]);
+      const focusName = () => {
+        const selected = selectedCompanyIndices().map(index => companyDisplayName(companyByIndex[index]));
+        if (!selected.length) return "Seguradora";
+        if (selected.length === 1) return selected[0];
+        if (selected.length === 2) return selected.join(" + ");
+        return "Grupo selecionado (" + selected.length + ")";
+      };
+      const focusValues = totals => {
+        const values = Array(8).fill(0);
+        state.companies.forEach(companyIndex => {
+          const companyValues = totals && totals.companies ? totals.companies.get(companyIndex) : null;
+          if (companyValues) companyValues.forEach((value, index) => { values[index] += value; });
+        });
+        return values;
+      };
+      const isFocusItem = item => Boolean(item && (item.group || (state.companies.size === 1 && state.companies.has(item.companyIndex))));
+      const itemName = item => item && item.group ? focusName() : companyDisplayName(companyByIndex[item.companyIndex]);
+      const money = value => {
+        if (value == null || !Number.isFinite(value)) return "—";
+        const abs = Math.abs(value);
+        const sign = value < 0 ? "−" : "";
+        if (abs >= 1e9) return sign + "R$ " + (abs / 1e9).toLocaleString(UI_LOCALE, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + (UI_LANG === "en" ? " bn" : " bi");
+        if (abs >= 1e6) return sign + "R$ " + (abs / 1e6).toLocaleString(UI_LOCALE, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + (UI_LANG === "en" ? " mn" : " mi");
+        if (abs >= 1e3) return sign + "R$ " + (abs / 1e3).toLocaleString(UI_LOCALE, { maximumFractionDigits: 0 }) + (UI_LANG === "en" ? " k" : " mil");
+        return sign + "R$ " + abs.toLocaleString(UI_LOCALE, { maximumFractionDigits: 0 });
+      };
+      const pct = (value, digits = 1) => value == null || !Number.isFinite(value) ? "—" : new Intl.NumberFormat(UI_LOCALE, { style: "percent", minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
+      const signedPct = value => value == null || !Number.isFinite(value) ? "—" : (value >= 0 ? "+" : "−") + pct(Math.abs(value), 1);
+      const pp = value => value == null || !Number.isFinite(value) ? "—" : (value >= 0 ? "+" : "−") + Math.abs(value * 100).toLocaleString(UI_LOCALE, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + " p.p.";
+      const growth = (current, previous) => previous == null || previous === 0 ? null : current / previous - 1;
+      const deltaClass = value => value == null || value === 0 ? "r4-neutral" : value > 0 ? "r4-positive" : "r4-negative";
+      const setDelta = (node, textValue, value, inverse = false) => {
+        node.textContent = textValue;
+        node.className = "r4-kpi-context text-small " + (inverse ? deltaClass(value == null ? value : -value) : deltaClass(value));
+      };
+      const svgEl = (name, attrs = {}, textValue = null) => {
+        const node = document.createElementNS("http://www.w3.org/2000/svg", name);
+        Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, String(value)));
+        if (textValue != null) node.textContent = textValue;
+        return node;
+      };
+
+      function syncBranchControl() {
+        Array.from(el("r4-branches").options).forEach(option => {
+          option.selected = state.branches.has(Number(option.value));
+        });
+      }
+
+      function applyProduct(productId) {
+        const product = productById.get(productId);
+        if (!product) return;
+        const subproduct = product.subproducts.find(item => item.id === product.defaultSubproduct) || product.subproducts[0];
+        state.productId = product.id;
+        state.subproductId = subproduct ? subproduct.id : null;
+        state.branches = branchIndices(subproduct ? subproduct.codes : product.codes);
+        aggregateCache.clear();
+        syncBranchControl();
+        render();
+      }
+
+      function applySubproduct(subproductId) {
+        const product = currentProduct();
+        const subproduct = product ? product.subproducts.find(item => item.id === subproductId) : null;
+        if (!subproduct) return;
+        state.subproductId = subproduct.id;
+        state.branches = branchIndices(subproduct.codes);
+        aggregateCache.clear();
+        syncBranchControl();
+        render();
+      }
+
+      function renderProductNavigation() {
+        const productHost = el("r4-product-tabs");
+        const subproductHost = el("r4-subproduct-tabs");
+        productHost.replaceChildren();
+        subproductHost.replaceChildren();
+        products.forEach(product => {
+          const button = document.createElement("button");
+          const selected = product.id === state.productId;
+          button.type = "button";
+          button.className = "btn" + (selected ? " btn-primary" : "");
+          button.setAttribute("role", "tab");
+          button.setAttribute("aria-selected", String(selected));
+          button.textContent = product.label;
+          button.addEventListener("click", () => applyProduct(product.id));
+          productHost.appendChild(button);
+        });
+        const product = currentProduct();
+        if (!product) {
+          el("r4-product-description").textContent = "Seleção manual de ramos";
+          el("r4-product-scope").textContent = state.branches.size + " ramos selecionados";
+          return;
+        }
+        product.subproducts.forEach(subproduct => {
+          const button = document.createElement("button");
+          const selected = subproduct.id === state.subproductId;
+          button.type = "button";
+          button.className = "btn" + (selected ? " btn-primary" : "");
+          button.setAttribute("role", "tab");
+          button.setAttribute("aria-selected", String(selected));
+          button.textContent = subproduct.label;
+          button.addEventListener("click", () => applySubproduct(subproduct.id));
+          subproductHost.appendChild(button);
+        });
+        const subproduct = currentSubproduct();
+        el("r4-product-description").textContent = product.description;
+        const codes = Array.from(state.branches).map(index => branchByIndex[index] ? branchByIndex[index].code : null).filter(Boolean);
+        const codeSummary = codes.length <= 8 ? "ramos SUSEP " + codes.join(", ") : codes.length + " ramos SUSEP consolidados";
+        el("r4-product-scope").textContent = product.label + " · " + (subproduct ? subproduct.label : "seleção manual") + " · " + codeSummary;
+      }
+
+      function availableMonth(year) {
+        return year === latestYear ? latestMonth : 12;
+      }
+
+      function scopeFor(mode, year, selectedMonth) {
+        const cutoff = mode === "annual" ? availableMonth(year) : Math.min(selectedMonth, availableMonth(year));
+        const startId = mode === "monthly" ? String(year) + String(cutoff).padStart(2, "0") : String(year) + "01";
+        const endId = String(year) + String(cutoff).padStart(2, "0");
+        let label;
+        let short;
+        let kind = mode;
+        if (mode === "monthly") {
+          label = UI_LANG === "en" ? monthNames[cutoff - 1] + " " + year : monthNames[cutoff - 1] + " de " + year;
+          short = monthShort[cutoff - 1] + "/" + String(year).slice(2);
+        } else if (mode === "ytd") {
+          label = cutoff === 6 ? (UI_LANG === "en" ? "First half of " : "1º semestre de ") + year : (UI_LANG === "en" ? "YTD Jan–" : "Acumulado jan–") + monthShort[cutoff - 1] + "/" + year;
+          short = cutoff === 6 ? (UI_LANG === "en" ? "1H" : "1S") + String(year).slice(2) : "YTD" + monthShort[cutoff - 1] + "/" + String(year).slice(2);
+        } else {
+          label = cutoff === 12 ? String(year) : (UI_LANG === "en" ? "YTD through " : "Acumulado até ") + monthShort[cutoff - 1] + "/" + year;
+          short = cutoff === 12 ? String(year) : "YTD" + monthShort[cutoff - 1] + "/" + String(year).slice(2);
+          kind = cutoff === 12 ? "annual" : "ytd";
+        }
+        const start = monthIndexById.get(startId);
+        const end = monthIndexById.get(endId);
+        const previousYear = year - 1;
+        const previous = previousYear >= startYear ? scopeForPrevious(mode, previousYear, cutoff) : null;
+        return { id: mode + ":" + year + ":" + cutoff, mode, kind, year, month: cutoff, start, end, label, short, previous };
+      }
+
+      function scopeForPrevious(mode, year, cutoff) {
+        const previousMode = mode === "annual" && cutoff < 12 ? "ytd" : mode;
+        const startId = previousMode === "monthly" ? String(year) + String(cutoff).padStart(2, "0") : String(year) + "01";
+        const endId = String(year) + String(cutoff).padStart(2, "0");
+        const start = monthIndexById.get(startId);
+        const end = monthIndexById.get(endId);
+        let label;
+        let short;
+        if (previousMode === "monthly") {
+          label = UI_LANG === "en" ? monthNames[cutoff - 1] + " " + year : monthNames[cutoff - 1] + " de " + year;
+          short = monthShort[cutoff - 1] + "/" + String(year).slice(2);
+        } else if (previousMode === "ytd") {
+          label = cutoff === 6 ? (UI_LANG === "en" ? "First half of " : "1º semestre de ") + year : (UI_LANG === "en" ? "YTD Jan–" : "Acumulado jan–") + monthShort[cutoff - 1] + "/" + year;
+          short = cutoff === 6 ? (UI_LANG === "en" ? "1H" : "1S") + String(year).slice(2) : "YTD" + monthShort[cutoff - 1] + "/" + String(year).slice(2);
+        } else {
+          label = String(year);
+          short = String(year);
+        }
+        return { id: previousMode + ":" + year + ":" + cutoff, mode: previousMode, kind: previousMode, year, month: cutoff, start, end, label, short, previous: null };
+      }
+
+      function currentScope() {
+        return scopeFor(state.mode, state.year, state.month);
+      }
+
+      function aggregate(scope, selectedBranches = state.branches) {
+        if (!scope || scope.start == null || scope.end == null || !selectedBranches.size) return { market: Array(8).fill(0), companies: new Map(), ranking: [] };
+        const branchKey = Array.from(selectedBranches).sort((a, b) => a - b).join(".");
+        const cacheKey = branchKey + "|" + scope.start + "|" + scope.end;
+        let result = aggregateCache.get(cacheKey);
+        if (!result) {
+          const companies = new Map();
+          const market = Array(8).fill(0);
+          for (let monthIndex = scope.start; monthIndex <= scope.end; monthIndex += 1) {
+            rowsByMonth[monthIndex].forEach(row => {
+              if (!selectedBranches.has(row[2])) return;
+              let values = companies.get(row[1]);
+              if (!values) {
+                values = Array(8).fill(0);
+                companies.set(row[1], values);
+              }
+              for (let valueIndex = 0; valueIndex < 8; valueIndex += 1) {
+                const value = Number(row[valueIndex + 3]) || 0;
+                values[valueIndex] += value;
+                market[valueIndex] += value;
+              }
+            });
+          }
+          result = { market, companies };
+          aggregateCache.set(cacheKey, result);
+        }
+        let rankingItems = Array.from(result.companies, ([companyIndex, values]) => ({ companyIndex, values }))
+          .filter(item => companyByIndex[item.companyIndex] && !companyByIndex[item.companyIndex].aggregateMarket);
+        if (state.companies.size > 1) {
+          rankingItems = rankingItems.filter(item => !state.companies.has(item.companyIndex));
+          rankingItems.push({ companyIndex: null, group: true, values: focusValues(result) });
+        }
+        const ranking = rankingItems
+          .filter(item => item.values[metric().offset] !== 0)
+          .sort((a, b) => b.values[metric().offset] - a.values[metric().offset]);
+        return { market: result.market, companies: result.companies, ranking };
+      }
+
+      function loss(values) {
+        return values && values[2] ? values[3] / values[2] : null;
+      }
+
+      function safeRatio(numerator, denominator) {
+        return denominator != null && Math.abs(denominator) > 1e-9 ? numerator / denominator : null;
+      }
+
+      function technicalRatios(values) {
+        const earned = values ? values[2] : 0;
+        const issued = values ? values[1] : 0;
+        const claims = values ? values[3] : 0;
+        const reinsuranceExpense = values ? values[4] : 0;
+        const reinsuranceRevenue = values ? values[5] : 0;
+        const commercialExpense = values ? values[6] : 0;
+        const netEarned = earned - reinsuranceExpense;
+        const grossClaims = safeRatio(claims, earned);
+        const grossComm = safeRatio(commercialExpense, earned);
+        const netClaims = safeRatio(claims - reinsuranceRevenue, netEarned);
+        const netComm = safeRatio(commercialExpense, netEarned);
+        return {
+          retention: safeRatio(netEarned, issued),
+          grossClaims,
+          grossComm,
+          grossComposite: grossClaims == null || grossComm == null ? null : grossClaims + grossComm,
+          netClaims,
+          netComm,
+          netComposite: netClaims == null || netComm == null ? null : netClaims + netComm,
+          netTechnicalResult: netClaims == null || netComm == null ? null : 1 - netClaims - netComm
+        };
+      }
+
+      function snapshot() {
+        const scope = currentScope();
+        const current = aggregate(scope);
+        const previous = scope.previous ? aggregate(scope.previous) : null;
+        const companyValues = focusValues(current);
+        const previousCompanyValues = previous ? focusValues(previous) : null;
+        const marketValue = current.market[metric().offset];
+        const previousMarketValue = previous ? previous.market[metric().offset] : null;
+        const companyValue = companyValues[metric().offset];
+        const previousCompanyValue = previousCompanyValues ? previousCompanyValues[metric().offset] : null;
+        const rankIndex = current.ranking.findIndex(isFocusItem);
+        const previousRankIndex = previous ? previous.ranking.findIndex(isFocusItem) : -1;
+        return {
+          scope,
+          current,
+          previous,
+          companyValues,
+          previousCompanyValues,
+          marketValue,
+          previousMarketValue,
+          companyValue,
+          previousCompanyValue,
+          rank: rankIndex >= 0 ? rankIndex + 1 : null,
+          previousRank: previousRankIndex >= 0 ? previousRankIndex + 1 : null,
+          share: marketValue ? companyValue / marketValue : null,
+          previousShare: previousMarketValue ? previousCompanyValue / previousMarketValue : null,
+          marketGrowth: growth(marketValue, previousMarketValue),
+          companyGrowth: growth(companyValue, previousCompanyValue),
+          marketLoss: loss(current.market),
+          companyLoss: loss(companyValues)
+        };
+      }
+
+      function renderHeaderAndKpis(view) {
+        const name = focusName();
+        const hasCompare = Boolean(view.scope.previous);
+        el("r4-market-direction").textContent = view.marketGrowth == null ? "Mercado em perspectiva." : view.marketGrowth >= 0 ? "Mercado em expansão." : "Mercado em contração.";
+        el("r4-focus-direction").textContent = view.companyGrowth == null ? name + " em foco." : name + (view.companyGrowth >= 0 ? " ganha tração." : " perde tração.");
+        if (hasCompare) {
+          const rankMove = view.previousRank != null && view.rank != null ? view.previousRank - view.rank : null;
+          const rankText = rankMove == null || rankMove === 0 ? "mantém a posição" : rankMove > 0 ? "ganha " + rankMove + (rankMove === 1 ? " posição" : " posições") : "perde " + Math.abs(rankMove) + (rankMove === -1 ? " posição" : " posições");
+          el("r4-deck").textContent = view.scope.label + ": mercado " + signedPct(view.marketGrowth) + ", " + name + " " + signedPct(view.companyGrowth) + " e " + rankText + " no ranking de prêmio " + metric().noun + ".";
+          el("r4-focus-period").textContent = view.scope.label + " × " + view.scope.previous.label;
+        } else {
+          el("r4-deck").textContent = view.scope.label + ": " + name + " ocupa a posição #" + (view.rank || "—") + " e representa " + pct(view.share, 2) + " do prêmio " + metric().noun + ".";
+          el("r4-focus-period").textContent = view.scope.label;
+        }
+        el("r4-kpi-market-label").textContent = "MERCADO · " + metric().label.toUpperCase();
+        el("r4-kpi-market").textContent = money(view.marketValue);
+        setDelta(el("r4-kpi-market-delta"), hasCompare ? signedPct(view.marketGrowth) + " vs período comparável" : "Base inicial da série", view.marketGrowth);
+        el("r4-kpi-focus-label").textContent = name.toUpperCase() + " · " + metric().label.toUpperCase();
+        el("r4-kpi-focus").textContent = money(view.companyValue);
+        setDelta(el("r4-kpi-focus-delta"), hasCompare ? signedPct(view.companyGrowth) + " vs período comparável" : pct(view.share, 2) + " do mercado", view.companyGrowth);
+        el("r4-kpi-position").textContent = "#" + (view.rank || "—") + " · " + pct(view.share, 2);
+        const rankMove = view.previousRank != null && view.rank != null ? view.previousRank - view.rank : null;
+        const shareMove = view.previousShare == null || view.share == null ? null : view.share - view.previousShare;
+        const positionText = hasCompare ? (rankMove === 0 ? "posição estável" : (rankMove > 0 ? "+" : "−") + Math.abs(rankMove) + (Math.abs(rankMove) === 1 ? " posição" : " posições")) + " · " + pp(shareMove) : "Posição e participação atuais";
+        setDelta(el("r4-kpi-position-delta"), positionText, rankMove == null ? shareMove : rankMove);
+        el("r4-kpi-loss").textContent = pct(view.companyLoss, 1);
+        const lossGap = view.companyLoss == null || view.marketLoss == null ? null : view.companyLoss - view.marketLoss;
+        setDelta(el("r4-kpi-loss-delta"), pp(lossGap) + " vs mercado", lossGap, true);
+      }
+
+      function trendScopes() {
+        if (state.mode === "monthly") {
+          return Array.from({ length: availableMonth(state.year) }, (_, index) => scopeFor("monthly", state.year, index + 1));
+        }
+        if (state.mode === "ytd") {
+          return Array.from({ length: state.month }, (_, index) => scopeFor("ytd", state.year, index + 1));
+        }
+        const finalClosedYear = latestMonth === 12 ? latestYear : latestYear - 1;
+        const scopes = [];
+        for (let year = startYear; year <= finalClosedYear; year += 1) scopes.push(scopeFor("annual", year, 12));
+        if (latestMonth < 12) {
+          scopes.push(scopeFor("ytd", latestYear - 1, latestMonth));
+          scopes.push(scopeFor("ytd", latestYear, latestMonth));
+        }
+        return scopes;
+      }
+
+      function buildTrendPoint(scope) {
+        const totals = aggregate(scope);
+        const selectedScope = currentScope();
+        const total = totals.market[metric().offset];
+        const values = focusValues(totals);
+        const value = values[metric().offset];
+        const focusCompanyValues = totals.companies.get(state.focusCompany) || Array(8).fill(0);
+        const focusCompanyValue = focusCompanyValues[metric().offset];
+        const rankIndex = totals.ranking.findIndex(isFocusItem);
+        return { ...scope, total, value, focusCompanyValue, share: total ? value / total : null, rank: rankIndex >= 0 ? rankIndex + 1 : null, selected: scope.start === selectedScope.start && scope.end === selectedScope.end };
+      }
+
+      function renderTrend() {
+        const host = el("r4-trend-chart");
+        host.replaceChildren();
+        if (!state.branches.size) {
+          const empty = document.createElement("div");
+          empty.className = "r4-empty";
+          empty.textContent = "Selecione ao menos um ramo para visualizar a série.";
+          host.appendChild(empty);
+          return;
+        }
+        const width = Math.max(320, Math.floor(host.getBoundingClientRect().width || 736));
+        const mobile = width < 560;
+        const height = mobile ? 445 : 455;
+        const margin = { top: 40, right: mobile ? 42 : 68, bottom: 34, left: mobile ? 45 : 65 };
+        const plotW = width - margin.left - margin.right;
+        const topH = mobile ? 185 : 205;
+        const rankTop = margin.top + topH + 62;
+        const rankH = height - rankTop - margin.bottom;
+        const points = trendScopes().map(buildTrendPoint);
+        const step = plotW / Math.max(1, points.length);
+        points.forEach((point, index) => { point.x = margin.left + step * (index + .5); });
+        const maxMarket = Math.max(1, ...points.map(item => Math.max(0, item.total))) * 1.14;
+        const shares = points.map(item => item.share).filter(value => value != null && value >= 0);
+        const maxShare = Math.max(.02, ...shares) * 1.22;
+        const ranks = points.map(item => item.rank).filter(value => value != null);
+        const maxRank = Math.max(5, ...ranks);
+        const yMarket = value => margin.top + topH - Math.max(0, value) / maxMarket * topH;
+        const yShare = value => margin.top + topH - Math.max(0, value) / maxShare * topH;
+        const yRank = value => rankTop + (value - 1) / Math.max(1, maxRank - 1) * rankH;
+        const labelEvery = mobile && points.length > 8 ? 2 : 1;
+        const showLabel = index => index % labelEvery === 0 || index === points.length - 1 || points[index].selected;
+        const svg = svgEl("svg", { viewBox: "0 0 " + width + " " + height, role: "img", "aria-labelledby": "r4-trend-svg-title r4-trend-svg-desc" });
+        svg.appendChild(svgEl("title", { id: "r4-trend-svg-title" }, "Escala do mercado, participação e posição da seguradora em foco"));
+        svg.appendChild(svgEl("desc", { id: "r4-trend-svg-desc" }, "Barras cinza mostram o prêmio do mercado e barras azuis mostram o prêmio da Seguradora Foco; a linha superior mostra a participação e a linha inferior mostra a posição da seleção consolidada."));
+        const heading = state.mode === "monthly" ? "MESES DE " + state.year : state.mode === "ytd" ? "ACUMULADO MÊS A MÊS · " + state.year : "HISTÓRICO ANUAL + ACUMULADO CORRENTE";
+        svg.appendChild(svgEl("text", { x: margin.left + plotW / 2, y: 14, "text-anchor": "middle", class: "r4-axis text-small" }, heading));
+        [0, .5, 1].forEach(tick => {
+          const y = margin.top + topH - tick * topH;
+          svg.appendChild(svgEl("line", { x1: margin.left, x2: width - margin.right, y1: y, y2: y, class: "r4-gridline" }));
+          svg.appendChild(svgEl("text", { x: margin.left - 8, y: y + 4, "text-anchor": "end", class: "r4-axis text-small" }, money(maxMarket * tick).replace("R$ ", "")));
+          svg.appendChild(svgEl("text", { x: width - margin.right + 8, y: y + 4, class: "r4-axis text-small" }, pct(maxShare * tick, 0)));
+        });
+        const barWidth = Math.max(7, Math.min(22, step * .25));
+        const barGap = Math.max(2, Math.min(6, step * .06));
+        points.forEach((point, index) => {
+          const marketY = yMarket(point.total);
+          const focusY = yMarket(point.focusCompanyValue);
+          const marketX = point.x - barGap / 2 - barWidth;
+          const focusX = point.x + barGap / 2;
+          const barClass = point.selected ? "r4-market-bar-selected" : point.kind === "ytd" ? "r4-market-bar-compare" : "r4-market-bar";
+          const focusBarClass = point.selected ? "r4-focus-premium-bar-selected" : "r4-focus-premium-bar";
+          svg.appendChild(svgEl("rect", { x: marketX, y: marketY, width: barWidth, height: margin.top + topH - marketY, rx: 3, class: barClass }));
+          svg.appendChild(svgEl("rect", { x: focusX, y: focusY, width: barWidth, height: Math.max(2, margin.top + topH - focusY), rx: 3, class: focusBarClass }));
+          if (showLabel(index)) {
+            svg.appendChild(svgEl("text", { x: marketX + barWidth, y: Math.max(margin.top + 12, marketY - 7), "text-anchor": "end", class: "r4-axis r4-data-label text-small" }, money(point.total).replace("R$ ", "")));
+            svg.appendChild(svgEl("text", { x: focusX, y: Math.max(margin.top + 12, focusY - 7), "text-anchor": "start", fill: "var(--foreground)", class: "r4-data-label text-small" }, money(point.focusCompanyValue).replace("R$ ", "")));
+            svg.appendChild(svgEl("text", { x: point.x, y: margin.top + topH + 21, "text-anchor": "middle", class: "r4-axis text-small" }, point.short));
+          }
+        });
+        const sharePoints = points.filter(point => point.share != null && point.share >= 0);
+        if (sharePoints.length > 1) svg.appendChild(svgEl("path", { d: sharePoints.map((point, index) => (index ? "L" : "M") + point.x + " " + yShare(point.share)).join(" "), class: "r4-share-line" }));
+        sharePoints.forEach(point => {
+          const index = points.indexOf(point);
+          const y = yShare(point.share);
+          svg.appendChild(svgEl("circle", { cx: point.x, cy: y, r: point.selected ? 5 : 4, class: "r4-share-dot" + (point.selected ? " r4-share-dot-selected" : "") }));
+          if (showLabel(index)) svg.appendChild(svgEl("text", { x: point.x, y: Math.max(margin.top + 12, y - 9), "text-anchor": "middle", fill: "var(--foreground)", class: "r4-data-label text-small" }, pct(point.share, 1)));
+        });
+        svg.appendChild(svgEl("text", { x: margin.left, y: 30, class: "r4-axis text-small" }, "Mercado · " + shortName(focusCompanyName(), mobile) + " em azul"));
+        svg.appendChild(svgEl("text", { x: width - margin.right, y: 30, "text-anchor": "end", class: "r4-axis text-small" }, "Participação " + focusName()));
+        Array.from(new Set([1, Math.ceil(maxRank / 2), maxRank])).sort((a, b) => a - b).forEach(tick => {
+          const y = yRank(tick);
+          svg.appendChild(svgEl("line", { x1: margin.left, x2: width - margin.right, y1: y, y2: y, class: "r4-gridline" }));
+          svg.appendChild(svgEl("text", { x: margin.left - 8, y: y + 4, "text-anchor": "end", class: "r4-axis text-small" }, "#" + tick));
+        });
+        const rankPoints = points.filter(point => point.rank != null);
+        if (rankPoints.length > 1) svg.appendChild(svgEl("path", { d: rankPoints.map((point, index) => (index ? "L" : "M") + point.x + " " + yRank(point.rank)).join(" "), class: "r4-position-line" }));
+        rankPoints.forEach(point => {
+          const index = points.indexOf(point);
+          const y = yRank(point.rank);
+          svg.appendChild(svgEl("rect", { x: point.x - 4, y: y - 4, width: 8, height: 8, rx: 1, class: "r4-position-dot" + (point.selected ? " r4-position-dot-selected" : "") }));
+          const labelY = y <= rankTop + 24 ? y + 22 : y - 11;
+          if (showLabel(index)) svg.appendChild(svgEl("text", { x: point.x, y: labelY, "text-anchor": "middle", fill: "var(--foreground)", class: "r4-data-label text-small" }, "#" + point.rank));
+        });
+        svg.appendChild(svgEl("text", { x: margin.left, y: rankTop - 15, fill: "var(--foreground)", class: "text-small" }, "Posição de " + focusName() + " · 1 = melhor"));
+        points.forEach((point, index) => {
+          if (showLabel(index)) svg.appendChild(svgEl("text", { x: point.x, y: rankTop + rankH + 24, "text-anchor": "middle", class: "r4-axis text-small" }, point.short));
+        });
+        host.appendChild(svg);
+        el("r4-trend-subtitle").textContent = "Barras: mercado + Seguradora Foco (" + focusCompanyName() + ") · linhas: participação e posição " + focusName();
+      }
+
+      function shortName(name, mobile) {
+        const limit = mobile ? 13 : 20;
+        return name.length <= limit ? name : name.slice(0, limit - 1) + "…";
+      }
+
+      function renderRanking(view) {
+        const host = el("r4-ranking-chart");
+        host.replaceChildren();
+        const previousCompanies = view.previous ? view.previous.companies : new Map();
+        const filtered = view.current.ranking.filter(item => {
+          const premium = item.values[metric().offset];
+          const itemLoss = loss(item.values);
+          return premium >= state.minPremium && (state.lossCap === Infinity || (itemLoss != null && itemLoss <= state.lossCap));
+        });
+        let displayed = Number.isFinite(state.top) ? filtered.slice(0, state.top) : filtered.slice();
+        const focus = filtered.find(isFocusItem);
+        if (focus && !displayed.some(isFocusItem)) displayed = displayed.concat([{ separator: true }, focus]);
+        if (!displayed.length) {
+          const empty = document.createElement("div");
+          empty.className = "r4-empty";
+          empty.textContent = "Nenhuma seguradora atende aos filtros selecionados.";
+          host.appendChild(empty);
+          el("r4-concentration").textContent = "";
+          return;
+        }
+        const width = Math.max(320, Math.floor(host.getBoundingClientRect().width || 736));
+        const mobile = width < 580;
+        const rowHeight = mobile ? 48 : 44;
+        const top = 14;
+        const bottom = 24;
+        const left = mobile ? 94 : 150;
+        const right = mobile ? 76 : 190;
+        const plotW = Math.max(90, width - left - right);
+        const height = top + bottom + displayed.length * rowHeight;
+        const valuesForScale = [];
+        displayed.filter(item => !item.separator).forEach(item => {
+          valuesForScale.push(item.values[metric().offset]);
+          const previous = item.group ? (view.previous ? focusValues(view.previous) : null) : previousCompanies.get(item.companyIndex);
+          if (previous) valuesForScale.push(previous[metric().offset]);
+        });
+        const maxValue = Math.max(1, ...valuesForScale) * 1.04;
+        const svg = svgEl("svg", { viewBox: "0 0 " + width + " " + height, role: "img", "aria-labelledby": "r4-rank-svg-title r4-rank-svg-desc" });
+        svg.appendChild(svgEl("title", { id: "r4-rank-svg-title" }, "Ranking de seguradoras"));
+        svg.appendChild(svgEl("desc", { id: "r4-rank-svg-desc" }, "Ranking por prêmio nos ramos e período selecionados, com comparação equivalente ao ano anterior e destaque para a seguradora em foco."));
+        displayed.forEach((item, displayIndex) => {
+          const y = top + displayIndex * rowHeight;
+          if (item.separator) {
+            svg.appendChild(svgEl("line", { x1: 0, x2: width, y1: y + rowHeight / 2, y2: y + rowHeight / 2, class: "r4-gridline" }));
+            return;
+          }
+          const actualRank = view.current.ranking.indexOf(item) + 1;
+          const value = item.values[metric().offset];
+          const barWidth = Math.max(2, Math.max(0, value) / maxValue * plotW);
+          const centerY = y + rowHeight / 2;
+          const previous = item.group ? (view.previous ? focusValues(view.previous) : null) : previousCompanies.get(item.companyIndex);
+          const previousValue = previous ? previous[metric().offset] : null;
+          const change = growth(value, previousValue);
+          const itemLoss = loss(item.values);
+          const isFocus = isFocusItem(item);
+          if (isFocus) svg.appendChild(svgEl("rect", { x: 0, y: y + 2, width, height: rowHeight - 4, rx: 4, class: "r4-focus-band" }));
+          svg.appendChild(svgEl("text", { x: 4, y: centerY + 4, class: "r4-axis text-small" }, "#" + actualRank));
+          svg.appendChild(svgEl("text", { x: mobile ? 30 : 38, y: centerY + 4, fill: "var(--foreground)", class: "text-small" }, shortName(itemName(item), mobile)));
+          svg.appendChild(svgEl("rect", { x: left, y: centerY - 6, width: plotW, height: 12, rx: 4, class: "r4-rank-track" }));
+          svg.appendChild(svgEl("rect", { x: left, y: centerY - 6, width: barWidth, height: 12, rx: 4, class: isFocus ? "r4-rank-bar-focus" : "r4-rank-bar" }));
+          if (previousValue != null && previousValue >= 0) {
+            const previousX = left + Math.min(plotW, previousValue / maxValue * plotW);
+            svg.appendChild(svgEl("line", { x1: previousX, x2: previousX, y1: centerY - 9, y2: centerY + 9, class: "r4-prev-marker" }));
+          }
+          const labelX = left + plotW + 9;
+          svg.appendChild(svgEl("text", { x: labelX, y: centerY + (mobile ? 0 : -2), fill: "var(--foreground)", class: "text-small" }, mobile ? money(value).replace("R$ ", "") : money(value) + (change == null ? "" : " · " + signedPct(change))));
+          svg.appendChild(svgEl("text", { x: labelX, y: centerY + 14, class: "r4-axis text-small" }, mobile ? (change == null ? "" : signedPct(change)) : "Sinistralidade " + pct(itemLoss, 0)));
+        });
+        host.appendChild(svg);
+        const topFive = view.current.ranking.slice(0, 5).reduce((sum, item) => sum + item.values[metric().offset], 0);
+        el("r4-concentration").textContent = "Top 5 concentram " + pct(view.marketValue ? topFive / view.marketValue : null, 1) + " do mercado no recorte selecionado.";
+      }
+
+      function renderInsights(view) {
+        const name = focusName();
+        if (view.scope.previous && view.marketGrowth != null && view.companyGrowth != null) {
+          const gap = view.companyGrowth - view.marketGrowth;
+          el("r4-insight-1-title").textContent = "Gap de crescimento";
+          el("r4-insight-1").textContent = name + " ficou " + Math.abs(gap * 100).toLocaleString(UI_LOCALE, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + " p.p. " + (gap >= 0 ? "acima" : "abaixo") + " do mercado no período comparável.";
+        } else {
+          el("r4-insight-1-title").textContent = "Escala relativa";
+          el("r4-insight-1").textContent = name + " representa " + pct(view.share, 2) + " do prêmio " + metric().noun + " do mercado.";
+        }
+        const rankMove = view.previousRank != null && view.rank != null ? view.previousRank - view.rank : null;
+        const shareMove = view.previousShare == null || view.share == null ? null : view.share - view.previousShare;
+        el("r4-insight-2-title").textContent = "Representatividade";
+        if (view.scope.previous && rankMove != null && shareMove != null) {
+          const movement = rankMove === 0 ? "manteve a posição" : rankMove > 0 ? "ganhou " + rankMove + (rankMove === 1 ? " posição" : " posições") : "perdeu " + Math.abs(rankMove) + (rankMove === -1 ? " posição" : " posições");
+          el("r4-insight-2").textContent = name + " " + movement + " e variou " + pp(shareMove) + " de participação.";
+        } else {
+          el("r4-insight-2").textContent = name + " ocupa a posição #" + (view.rank || "—") + " no recorte selecionado.";
+        }
+        const lossGap = view.companyLoss == null || view.marketLoss == null ? null : view.companyLoss - view.marketLoss;
+        el("r4-insight-3-title").textContent = "Leitura de risco";
+        el("r4-insight-3").textContent = lossGap == null ? "Não há prêmio ganho suficiente para comparar a sinistralidade neste recorte." : "A sinistralidade de " + name + " está " + Math.abs(lossGap * 100).toLocaleString(UI_LOCALE, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + " p.p. " + (lossGap >= 0 ? "acima" : "abaixo") + " do mercado.";
+      }
+
+      function renderAdvanced(view) {
+        const focus = view.companyValues;
+        const previous = view.previousCompanyValues;
+        const market = view.current.market;
+        const netClaims = focus[3] - focus[5];
+        const previousNetClaims = previous ? previous[3] - previous[5] : null;
+        const marketNetClaims = market[3] - market[5];
+        const cession = focus[1] ? focus[4] / focus[1] : null;
+        const marketCession = market[1] ? market[4] / market[1] : null;
+        const commission = focus[1] ? focus[6] / focus[1] : null;
+        const marketCommission = market[1] ? market[6] / market[1] : null;
+        const monetary = [
+          ["r4-adv-claims", "r4-adv-claims-context", focus[3], previous ? previous[3] : null, market[3]],
+          ["r4-adv-net-claims", "r4-adv-net-claims-context", netClaims, previousNetClaims, marketNetClaims],
+          ["r4-adv-reins-expense", "r4-adv-reins-expense-context", focus[4], previous ? previous[4] : null, market[4]],
+          ["r4-adv-reins-revenue", "r4-adv-reins-revenue-context", focus[5], previous ? previous[5] : null, market[5]],
+          ["r4-adv-commercial", "r4-adv-commercial-context", focus[6], previous ? previous[6] : null, market[6]],
+          ["r4-adv-rvne", "r4-adv-rvne-context", focus[7], previous ? previous[7] : null, market[7]]
+        ];
+        monetary.forEach(item => {
+          el(item[0]).textContent = money(item[2]);
+          const change = growth(item[2], item[3]);
+          el(item[1]).textContent = "Mercado " + money(item[4]) + (change == null ? "" : " · " + signedPct(change) + " vs comparável");
+          el(item[1]).className = "r4-kpi-context text-small r4-neutral";
+        });
+        el("r4-adv-cession").textContent = pct(cession, 1);
+        el("r4-adv-cession-context").textContent = pp(cession == null || marketCession == null ? null : cession - marketCession) + " vs mercado";
+        el("r4-adv-commission").textContent = pct(commission, 1);
+        el("r4-adv-commission-context").textContent = pp(commission == null || marketCommission == null ? null : commission - marketCommission) + " vs mercado";
+        el("r4-advanced-subtitle").textContent = focusName() + " · " + view.scope.label + " · " + state.branches.size + (state.branches.size === 1 ? " ramo" : " ramos");
+      }
+
+      function technicalTrendPoints() {
+        return trendScopes().map(scope => {
+          const totals = aggregate(scope);
+          const focus = focusValues(totals);
+          return {
+            short: scope.short,
+            focusLoss: loss(focus),
+            marketLoss: loss(totals.market),
+            earned: focus[2],
+            claims: focus[3],
+            netClaims: focus[3] - focus[5]
+          };
+        });
+      }
+
+      function renderTechnicalChart() {
+        const host = el("r4-technical-chart");
+        host.replaceChildren();
+        const points = technicalTrendPoints();
+        if (!points.length) return;
+        const width = Math.max(320, Math.floor(host.getBoundingClientRect().width || 620));
+        const mobile = width < 520;
+        const height = 310;
+        const margin = { top: 42, right: 46, bottom: 42, left: mobile ? 50 : 62 };
+        const plotW = width - margin.left - margin.right;
+        const plotH = height - margin.top - margin.bottom;
+        const step = plotW / Math.max(1, points.length);
+        const x = index => margin.left + step * (index + .5);
+        const labelEvery = mobile && points.length > 8 ? 2 : 1;
+        const showLabel = index => index % labelEvery === 0 || index === points.length - 1;
+        const svg = svgEl("svg", { viewBox: "0 0 " + width + " " + height, role: "img", "aria-labelledby": "r4-tech-svg-title r4-tech-svg-desc" });
+        svg.appendChild(svgEl("title", { id: "r4-tech-svg-title" }, "Desempenho técnico da seleção"));
+        svg.appendChild(svgEl("desc", { id: "r4-tech-svg-desc" }, "Série histórica interativa dos indicadores técnicos para as seguradoras e ramos selecionados."));
+        const pathFor = (accessor, yScale) => points.map((point, index) => ({ value: accessor(point), x: x(index) }))
+          .filter(point => point.value != null && Number.isFinite(point.value))
+          .map((point, index) => (index ? "L" : "M") + point.x + " " + yScale(point.value)).join(" ");
+
+        if (state.technicalView === "loss") {
+          const values = points.flatMap(point => [point.focusLoss, point.marketLoss]).filter(value => value != null && Number.isFinite(value));
+          const minValue = Math.min(0, ...values);
+          const maxValue = Math.max(.1, ...values);
+          const span = Math.max(.01, maxValue - minValue);
+          const y = value => margin.top + (maxValue - value) / span * plotH;
+          [minValue, minValue + span / 2, maxValue].forEach(tick => {
+            const tickY = y(tick);
+            svg.appendChild(svgEl("line", { x1: margin.left, x2: width - margin.right, y1: tickY, y2: tickY, class: "r4-gridline" }));
+            svg.appendChild(svgEl("text", { x: margin.left - 7, y: tickY + 4, "text-anchor": "end", class: "r4-axis text-small" }, pct(tick, 0)));
+          });
+          const marketPath = pathFor(point => point.marketLoss, y);
+          const focusPath = pathFor(point => point.focusLoss, y);
+          if (marketPath) svg.appendChild(svgEl("path", { d: marketPath, class: "r4-tech-market-line" }));
+          if (focusPath) svg.appendChild(svgEl("path", { d: focusPath, class: "r4-tech-focus-line" }));
+          points.forEach((point, index) => {
+            if (point.marketLoss != null) svg.appendChild(svgEl("circle", { cx: x(index), cy: y(point.marketLoss), r: 3, class: "r4-tech-market-dot" }));
+            if (point.focusLoss != null) svg.appendChild(svgEl("circle", { cx: x(index), cy: y(point.focusLoss), r: 4, class: "r4-tech-focus-dot" }));
+          });
+          svg.appendChild(svgEl("text", { x: margin.left, y: 18, fill: "var(--foreground)", class: "text-small" }, focusName()));
+          svg.appendChild(svgEl("text", { x: width - margin.right, y: 18, "text-anchor": "end", class: "r4-axis text-small" }, "Mercado · tracejado"));
+          el("r4-technical-subtitle").textContent = "Sinistralidade histórica · seleção × mercado";
+        } else {
+          const values = points.flatMap(point => [point.earned, point.claims, point.netClaims]).filter(Number.isFinite);
+          const minValue = Math.min(0, ...values);
+          const maxValue = Math.max(1, ...values);
+          const span = Math.max(1, maxValue - minValue);
+          const y = value => margin.top + (maxValue - value) / span * plotH;
+          [minValue, minValue + span / 2, maxValue].forEach(tick => {
+            const tickY = y(tick);
+            svg.appendChild(svgEl("line", { x1: margin.left, x2: width - margin.right, y1: tickY, y2: tickY, class: "r4-gridline" }));
+            svg.appendChild(svgEl("text", { x: margin.left - 7, y: tickY + 4, "text-anchor": "end", class: "r4-axis text-small" }, money(tick).replace("R$ ", "")));
+          });
+          const zeroY = y(0);
+          const barWidth = Math.max(7, Math.min(20, step * .42));
+          points.forEach((point, index) => {
+            const earnedY = y(point.earned);
+            svg.appendChild(svgEl("rect", { x: x(index) - barWidth / 2, y: Math.min(zeroY, earnedY), width: barWidth, height: Math.max(1, Math.abs(zeroY - earnedY)), rx: 2, class: "r4-tech-bar" }));
+          });
+          const claimsPath = pathFor(point => point.claims, y);
+          const netPath = pathFor(point => point.netClaims, y);
+          if (claimsPath) svg.appendChild(svgEl("path", { d: claimsPath, class: "r4-tech-focus-line" }));
+          if (netPath) svg.appendChild(svgEl("path", { d: netPath, class: "r4-tech-secondary-line" }));
+          svg.appendChild(svgEl("text", { x: margin.left, y: 18, fill: "var(--foreground)", class: "text-small" }, "Barra: prêmio ganho"));
+          svg.appendChild(svgEl("text", { x: width - margin.right, y: 18, "text-anchor": "end", class: "r4-axis text-small" }, "Linhas: sinistro ocorrido e líquido"));
+          el("r4-technical-subtitle").textContent = "Prêmio ganho, sinistro ocorrido e líquido";
+        }
+        points.forEach((point, index) => {
+          if (showLabel(index)) svg.appendChild(svgEl("text", { x: x(index), y: height - 14, "text-anchor": "middle", class: "r4-axis text-small" }, point.short));
+        });
+        host.appendChild(svg);
+      }
+
+      function renderReinsuranceChart(view) {
+        const host = el("r4-reinsurance-chart");
+        host.replaceChildren();
+        const focus = view.companyValues;
+        const market = view.current.market;
+        const previous = view.previousCompanyValues;
+        let categories;
+        let formatter;
+        let compareLabel;
+        if (state.reinsuranceView === "ratios") {
+          categories = [
+            { label: "Cessão", focus: focus[1] ? focus[4] / focus[1] : null, compare: market[1] ? market[4] / market[1] : null },
+            { label: "Recuperação", focus: focus[3] ? focus[5] / focus[3] : null, compare: market[3] ? market[5] / market[3] : null },
+            { label: "Comissionamento", focus: focus[1] ? focus[6] / focus[1] : null, compare: market[1] ? market[6] / market[1] : null }
+          ];
+          formatter = value => pct(value, 1);
+          compareLabel = "Mercado";
+          el("r4-reinsurance-subtitle").textContent = "Índices da seleção × mercado";
+        } else {
+          categories = [
+            { label: "Desp. resseguro", focus: focus[4], compare: previous ? previous[4] : null },
+            { label: "Receita resseguro", focus: focus[5], compare: previous ? previous[5] : null },
+            { label: "Desp. comercial", focus: focus[6], compare: previous ? previous[6] : null },
+            { label: "RVNE", focus: focus[7], compare: previous ? previous[7] : null }
+          ];
+          formatter = money;
+          compareLabel = view.scope.previous ? view.scope.previous.short : "Sem comparável";
+          el("r4-reinsurance-subtitle").textContent = "Valores da seleção × período comparável";
+        }
+        const width = Math.max(320, Math.floor(host.getBoundingClientRect().width || 620));
+        const mobile = width < 520;
+        const rowHeight = 58;
+        const height = 54 + categories.length * rowHeight + 24;
+        const margin = { left: mobile ? 102 : 134, right: mobile ? 52 : 72 };
+        const plotW = Math.max(110, width - margin.left - margin.right);
+        const values = categories.flatMap(item => [item.focus, item.compare]).filter(value => value != null && Number.isFinite(value));
+        const minValue = Math.min(0, ...values);
+        const maxValue = Math.max(1e-9, ...values);
+        const span = Math.max(1e-9, maxValue - minValue);
+        const x = value => margin.left + (value - minValue) / span * plotW;
+        const zeroX = x(0);
+        const svg = svgEl("svg", { viewBox: "0 0 " + width + " " + height, role: "img", "aria-labelledby": "r4-reins-svg-title r4-reins-svg-desc" });
+        svg.appendChild(svgEl("title", { id: "r4-reins-svg-title" }, "Estrutura de resseguro"));
+        svg.appendChild(svgEl("desc", { id: "r4-reins-svg-desc" }, "Comparação interativa de índices e valores de resseguro para o período selecionado."));
+        svg.appendChild(svgEl("text", { x: margin.left, y: 18, fill: "var(--foreground)", class: "text-small" }, focusName()));
+        svg.appendChild(svgEl("text", { x: width - margin.right, y: 18, "text-anchor": "end", class: "r4-axis text-small" }, compareLabel + " · barra clara"));
+        svg.appendChild(svgEl("line", { x1: zeroX, x2: zeroX, y1: 34, y2: height - 18, class: "r4-gridline" }));
+        categories.forEach((item, index) => {
+          const y = 44 + index * rowHeight;
+          svg.appendChild(svgEl("text", { x: margin.left - 8, y: y + 23, "text-anchor": "end", fill: "var(--foreground)", class: "text-small" }, item.label));
+          [[item.focus, "r4-tech-bar", y + 8], [item.compare, "r4-compare-bar", y + 27]].forEach(series => {
+            const value = series[0];
+            if (value == null || !Number.isFinite(value)) return;
+            const valueX = x(value);
+            svg.appendChild(svgEl("rect", { x: Math.min(zeroX, valueX), y: series[2], width: Math.max(2, Math.abs(valueX - zeroX)), height: 12, rx: 3, class: series[1] }));
+            const positive = value >= 0;
+            svg.appendChild(svgEl("text", { x: positive ? Math.min(width - 3, valueX + 5) : Math.max(3, valueX - 5), y: series[2] + 10, "text-anchor": positive ? "start" : "end", fill: "var(--foreground)", class: "r4-data-label text-small" }, formatter(value)));
+          });
+        });
+        host.appendChild(svg);
+      }
+
+      function renderRatioKpis(view) {
+        const focus = technicalRatios(view.companyValues);
+        const market = technicalRatios(view.current.market);
+        const previous = view.previousCompanyValues ? technicalRatios(view.previousCompanyValues) : null;
+        const cards = [
+          ["r4-gross-composite", "r4-gross-composite-context", "grossComposite", true],
+          ["r4-net-composite", "r4-net-composite-context", "netComposite", true],
+          ["r4-estimated-retention", "r4-estimated-retention-context", "retention", false],
+          ["r4-net-technical-result", "r4-net-technical-result-context", "netTechnicalResult", false]
+        ];
+        cards.forEach(item => {
+          const currentValue = focus[item[2]];
+          const marketValue = market[item[2]];
+          const comparableValue = previous ? previous[item[2]] : null;
+          el(item[0]).textContent = pct(currentValue, 1);
+          const marketGap = currentValue == null || marketValue == null ? null : currentValue - marketValue;
+          const comparableGap = currentValue == null || comparableValue == null ? null : currentValue - comparableValue;
+          const context = "Mercado " + pct(marketValue, 1) + (comparableGap == null ? "" : " · " + pp(comparableGap) + " vs comparável");
+          setDelta(el(item[1]), context, marketGap, item[3]);
+        });
+        const product = currentProduct();
+        const subproduct = currentSubproduct();
+        el("r4-ratio-subtitle").textContent = (product ? product.label : "Seleção manual") + " · " + (subproduct ? subproduct.label + " · " : "") + view.scope.label + " · " + focusName() + " × mercado";
+      }
+
+      function renderGrossNetChart(view) {
+        const host = el("r4-gross-net-chart");
+        host.replaceChildren();
+        const focus = technicalRatios(view.companyValues);
+        const market = technicalRatios(view.current.market);
+        const categories = [
+          { label: "Claims", focusGross: focus.grossClaims, focusNet: focus.netClaims, marketGross: market.grossClaims, marketNet: market.netClaims },
+          { label: "Comm", focusGross: focus.grossComm, focusNet: focus.netComm, marketGross: market.grossComm, marketNet: market.netComm },
+          { label: "Composite", focusGross: focus.grossComposite, focusNet: focus.netComposite, marketGross: market.grossComposite, marketNet: market.netComposite }
+        ];
+        const width = Math.max(320, Math.floor(host.getBoundingClientRect().width || 560));
+        const mobile = width < 520;
+        const height = 286;
+        const margin = { top: 58, right: mobile ? 94 : 126, bottom: 30, left: mobile ? 72 : 92 };
+        const plotW = Math.max(100, width - margin.left - margin.right);
+        const values = categories.flatMap(item => [item.focusGross, item.focusNet, item.marketGross, item.marketNet]).filter(Number.isFinite);
+        const minValue = Math.min(0, ...values);
+        const maxValue = Math.max(.1, ...values);
+        const span = Math.max(.01, maxValue - minValue);
+        const x = value => margin.left + (value - minValue) / span * plotW;
+        const rowHeight = (height - margin.top - margin.bottom) / categories.length;
+        const svg = svgEl("svg", { viewBox: "0 0 " + width + " " + height, role: "img", "aria-labelledby": "r4-gross-net-title r4-gross-net-desc" });
+        svg.appendChild(svgEl("title", { id: "r4-gross-net-title" }, "Índices técnicos brutos e líquidos estimados"));
+        svg.appendChild(svgEl("desc", { id: "r4-gross-net-desc" }, "Comparação de Claims, Comm e Composite, brutos e líquidos estimados, para a seleção de seguradoras e o mercado."));
+        svg.appendChild(svgEl("text", { x: margin.left, y: 18, fill: "var(--foreground)", class: "text-small" }, "○ bruto · ■ líquido · " + focusName()));
+        svg.appendChild(svgEl("text", { x: width - margin.right, y: 38, "text-anchor": "end", class: "r4-axis text-small" }, "Mercado · tracejado"));
+        [minValue, minValue + span / 2, maxValue].forEach(tick => {
+          const tickX = x(tick);
+          svg.appendChild(svgEl("line", { x1: tickX, x2: tickX, y1: margin.top - 8, y2: height - margin.bottom, class: "r4-gridline" }));
+          svg.appendChild(svgEl("text", { x: tickX, y: 38, "text-anchor": "middle", class: "r4-axis text-small" }, pct(tick, 0)));
+        });
+        categories.forEach((item, index) => {
+          const centerY = margin.top + rowHeight * (index + .5);
+          const focusY = centerY - 10;
+          const marketY = centerY + 12;
+          svg.appendChild(svgEl("text", { x: margin.left - 9, y: centerY + 4, "text-anchor": "end", fill: "var(--foreground)", class: "text-small" }, item.label));
+          if (Number.isFinite(item.focusGross) && Number.isFinite(item.focusNet)) {
+            svg.appendChild(svgEl("line", { x1: x(item.focusGross), x2: x(item.focusNet), y1: focusY, y2: focusY, class: "r4-ratio-focus-link" }));
+            svg.appendChild(svgEl("circle", { cx: x(item.focusGross), cy: focusY, r: 5, class: "r4-ratio-focus-gross" }));
+            svg.appendChild(svgEl("rect", { x: x(item.focusNet) - 5, y: focusY - 5, width: 10, height: 10, rx: 1, class: "r4-ratio-focus-net" }));
+          }
+          if (Number.isFinite(item.marketGross) && Number.isFinite(item.marketNet)) {
+            svg.appendChild(svgEl("line", { x1: x(item.marketGross), x2: x(item.marketNet), y1: marketY, y2: marketY, class: "r4-ratio-market-link" }));
+            svg.appendChild(svgEl("circle", { cx: x(item.marketGross), cy: marketY, r: 4, class: "r4-ratio-market-gross" }));
+            svg.appendChild(svgEl("rect", { x: x(item.marketNet) - 4, y: marketY - 4, width: 8, height: 8, rx: 1, class: "r4-ratio-market-net" }));
+          }
+          const labelX = margin.left + plotW + 8;
+          svg.appendChild(svgEl("text", { x: labelX, y: focusY + 4, fill: "var(--foreground)", class: "r4-data-label text-small" }, "F " + pct(item.focusGross, 0) + " → " + pct(item.focusNet, 0)));
+          svg.appendChild(svgEl("text", { x: labelX, y: marketY + 4, class: "r4-axis r4-data-label text-small" }, "M " + pct(item.marketGross, 0) + " → " + pct(item.marketNet, 0)));
+        });
+        host.appendChild(svg);
+        el("r4-gross-net-subtitle").textContent = view.scope.label + " · " + focusName() + " × mercado";
+      }
+
+      function renderRatioHistory() {
+        const host = el("r4-ratio-history-chart");
+        host.replaceChildren();
+        const definitions = {
+          grossComposite: "Composite bruto",
+          netComposite: "Composite líquido estimado",
+          grossClaims: "Claims bruto",
+          netClaims: "Claims líquido estimado",
+          grossComm: "Comm bruto",
+          netComm: "Comm líquido estimado",
+          retention: "Retenção estimada"
+        };
+        const points = trendScopes().map(scope => {
+          const totals = aggregate(scope);
+          return { short: scope.short, focus: technicalRatios(focusValues(totals))[state.ratioHistoryView], market: technicalRatios(totals.market)[state.ratioHistoryView] };
+        });
+        if (!points.length) return;
+        const width = Math.max(320, Math.floor(host.getBoundingClientRect().width || 660));
+        const mobile = width < 560;
+        const height = 310;
+        const margin = { top: 44, right: 54, bottom: 44, left: mobile ? 52 : 64 };
+        const plotW = width - margin.left - margin.right;
+        const plotH = height - margin.top - margin.bottom;
+        const values = points.flatMap(point => [point.focus, point.market]).filter(Number.isFinite);
+        const minValue = Math.min(0, ...values);
+        const maxValue = Math.max(.1, ...values);
+        const span = Math.max(.01, maxValue - minValue);
+        const step = plotW / Math.max(1, points.length - 1);
+        const x = index => margin.left + (points.length === 1 ? plotW / 2 : step * index);
+        const y = value => margin.top + (maxValue - value) / span * plotH;
+        const labelEvery = mobile && points.length > 8 ? 2 : 1;
+        const path = key => points.map((point, index) => ({ value: point[key], x: x(index) })).filter(point => Number.isFinite(point.value)).map((point, index) => (index ? "L" : "M") + point.x + " " + y(point.value)).join(" ");
+        const svg = svgEl("svg", { viewBox: "0 0 " + width + " " + height, role: "img", "aria-labelledby": "r4-ratio-history-title r4-ratio-history-desc" });
+        svg.appendChild(svgEl("title", { id: "r4-ratio-history-title" }, "Evolução de " + definitions[state.ratioHistoryView]));
+        svg.appendChild(svgEl("desc", { id: "r4-ratio-history-desc" }, "Série histórica do indicador técnico selecionado para a seleção de seguradoras e o mercado."));
+        [minValue, minValue + span / 2, maxValue].forEach(tick => {
+          const tickY = y(tick);
+          svg.appendChild(svgEl("line", { x1: margin.left, x2: width - margin.right, y1: tickY, y2: tickY, class: "r4-gridline" }));
+          svg.appendChild(svgEl("text", { x: margin.left - 7, y: tickY + 4, "text-anchor": "end", class: "r4-axis text-small" }, pct(tick, 0)));
+        });
+        const marketPath = path("market");
+        const focusPath = path("focus");
+        if (marketPath) svg.appendChild(svgEl("path", { d: marketPath, class: "r4-tech-market-line" }));
+        if (focusPath) svg.appendChild(svgEl("path", { d: focusPath, class: "r4-tech-focus-line" }));
+        points.forEach((point, index) => {
+          if (Number.isFinite(point.market)) svg.appendChild(svgEl("circle", { cx: x(index), cy: y(point.market), r: 3, class: "r4-tech-market-dot" }));
+          if (Number.isFinite(point.focus)) svg.appendChild(svgEl("circle", { cx: x(index), cy: y(point.focus), r: 4, class: "r4-tech-focus-dot" }));
+          if (index % labelEvery === 0 || index === points.length - 1) svg.appendChild(svgEl("text", { x: x(index), y: height - 15, "text-anchor": "middle", class: "r4-axis text-small" }, point.short));
+        });
+        svg.appendChild(svgEl("text", { x: margin.left, y: 18, fill: "var(--foreground)", class: "text-small" }, focusName()));
+        svg.appendChild(svgEl("text", { x: width - margin.right, y: 18, "text-anchor": "end", class: "r4-axis text-small" }, "Mercado · tracejado"));
+        host.appendChild(svg);
+        el("r4-ratio-history-subtitle").textContent = definitions[state.ratioHistoryView] + " · " + focusName() + " × mercado";
+      }
+
+      function renderTechnicalRanking(view) {
+        const body = el("r4-technical-ranking-body");
+        body.replaceChildren();
+        const filtered = view.current.ranking.filter(item => {
+          const premium = item.values[metric().offset];
+          const itemLoss = loss(item.values);
+          return premium >= state.minPremium && (state.lossCap === Infinity || (itemLoss != null && itemLoss <= state.lossCap));
+        });
+        let displayed = Number.isFinite(state.top) ? filtered.slice(0, state.top) : filtered.slice();
+        const focus = filtered.find(isFocusItem);
+        if (focus && !displayed.some(isFocusItem)) displayed = displayed.concat([focus]);
+        displayed.forEach(item => {
+          const ratios = technicalRatios(item.values);
+          const row = document.createElement("tr");
+          if (isFocusItem(item)) row.className = "r4-table-focus";
+          const rank = view.current.ranking.indexOf(item) + 1;
+          const cells = [
+            "#" + rank + " · " + itemName(item),
+            money(item.values[1]),
+            pct(ratios.retention, 1),
+            pct(ratios.grossClaims, 1),
+            pct(ratios.grossComm, 1),
+            pct(ratios.grossComposite, 1),
+            pct(ratios.netClaims, 1),
+            pct(ratios.netComm, 1),
+            pct(ratios.netComposite, 1)
+          ];
+          cells.forEach(value => {
+            const cell = document.createElement("td");
+            cell.textContent = value;
+            row.appendChild(cell);
+          });
+          body.appendChild(row);
+        });
+        if (!displayed.length) {
+          const row = document.createElement("tr");
+          const cell = document.createElement("td");
+          cell.colSpan = 9;
+          cell.textContent = "Nenhuma seguradora atende aos filtros selecionados.";
+          row.appendChild(cell);
+          body.appendChild(row);
+        }
+        el("r4-technical-ranking-subtitle").textContent = metric().label + " · " + view.scope.label + " · " + (Number.isFinite(state.top) ? "Top " + state.top : "todas as seguradoras") + " · nomes sem código SUSEP";
+      }
+
+      function renderProductBreakdown(view) {
+        const host = el("r4-product-mix-chart");
+        host.replaceChildren();
+        const product = currentProduct();
+        if (!product) return;
+        const items = product.subproducts.filter(item => item.breakdown !== false).map(item => {
+          const totals = aggregate(view.scope, branchIndices(item.codes));
+          const focus = focusValues(totals);
+          return {
+            label: item.label,
+            market: totals.market[metric().offset],
+            focus: focus[metric().offset]
+          };
+        }).filter(item => item.market !== 0 || item.focus !== 0).sort((a, b) => b.market - a.market);
+        if (!items.length) {
+          const empty = document.createElement("div");
+          empty.className = "r4-empty";
+          empty.textContent = "Não há produção para os subprodutos deste recorte.";
+          host.appendChild(empty);
+          return;
+        }
+        const marketTotal = items.reduce((sum, item) => sum + Math.max(0, item.market), 0);
+        const focusTotal = items.reduce((sum, item) => sum + Math.max(0, item.focus), 0);
+        const width = Math.max(320, Math.floor(host.getBoundingClientRect().width || 736));
+        const mobile = width < 580;
+        const rowHeight = mobile ? 58 : 52;
+        const margin = { top: 44, right: mobile ? 70 : 158, bottom: 24, left: mobile ? 116 : 178 };
+        const plotW = Math.max(100, width - margin.left - margin.right);
+        const height = margin.top + margin.bottom + items.length * rowHeight;
+        const x = share => margin.left + Math.max(0, Math.min(1, share || 0)) * plotW;
+        const svg = svgEl("svg", { viewBox: "0 0 " + width + " " + height, role: "img", "aria-labelledby": "r4-mix-svg-title r4-mix-svg-desc" });
+        svg.appendChild(svgEl("title", { id: "r4-mix-svg-title" }, "Mix de subprodutos de " + product.label));
+        svg.appendChild(svgEl("desc", { id: "r4-mix-svg-desc" }, "Barras mostram a participação de cada subproduto no mercado do produto e pontos mostram a participação equivalente da seleção de seguradoras."));
+        [0, .5, 1].forEach(tick => {
+          const tickX = x(tick);
+          svg.appendChild(svgEl("line", { x1: tickX, x2: tickX, y1: margin.top - 8, y2: height - margin.bottom, class: "r4-gridline" }));
+          svg.appendChild(svgEl("text", { x: tickX, y: 18, "text-anchor": "middle", class: "r4-axis text-small" }, pct(tick, 0)));
+        });
+        items.forEach((item, index) => {
+          const y = margin.top + index * rowHeight;
+          const marketShare = marketTotal ? Math.max(0, item.market) / marketTotal : 0;
+          const focusShare = focusTotal ? Math.max(0, item.focus) / focusTotal : 0;
+          const centerY = y + rowHeight / 2;
+          svg.appendChild(svgEl("text", { x: margin.left - 10, y: centerY + 4, "text-anchor": "end", fill: "var(--foreground)", class: "text-small" }, shortName(item.label, mobile)));
+          svg.appendChild(svgEl("rect", { x: margin.left, y: centerY - 7, width: plotW, height: 14, rx: 5, class: "r4-mix-track" }));
+          svg.appendChild(svgEl("rect", { x: margin.left, y: centerY - 7, width: Math.max(2, marketShare * plotW), height: 14, rx: 5, class: "r4-mix-bar" }));
+          svg.appendChild(svgEl("circle", { cx: x(focusShare), cy: centerY, r: 6, class: "r4-mix-focus" }));
+          const label = mobile ? pct(marketShare, 0) + " · " + pct(focusShare, 0) : "Mercado " + pct(marketShare, 1) + " · " + focusName() + " " + pct(focusShare, 1);
+          svg.appendChild(svgEl("text", { x: margin.left + plotW + 10, y: centerY + 4, fill: "var(--foreground)", class: "text-small" }, label));
+        });
+        host.appendChild(svg);
+        el("r4-product-mix-subtitle").textContent = product.label + " · " + metric().label + " · " + view.scope.label + " · barra mercado, ponto " + focusName();
+      }
+
+      function financialMetrics(values, monthNumber) {
+        const premium = values ? values[0] : 0;
+        const earned = values ? values[1] : 0;
+        const underwritingCosts = values ? values.slice(2, 8).reduce((sum, value) => sum + value, 0) : 0;
+        const profit = values ? values[8] : 0;
+        const equity = values ? values[9] : 0;
+        return {
+          premium,
+          combined: earned > 0 ? -underwritingCosts / earned : null,
+          profit,
+          roe: equity > 0 && monthNumber > 0 ? profit * 12 / monthNumber / equity : null
+        };
+      }
+
+      function financialPeriod() {
+        const month = state.mode === "annual" ? availableMonth(state.year) : state.month;
+        const id = String(state.year) + String(month).padStart(2, "0");
+        const previousId = String(state.year - 1) + String(month).padStart(2, "0");
+        return {
+          month,
+          id,
+          index: monthIndexById.get(id),
+          previousId,
+          previousIndex: monthIndexById.get(previousId),
+          label: monthShort[month - 1].toUpperCase() + "/" + state.year + " YTD",
+          previousLabel: monthShort[month - 1].toUpperCase() + "/" + (state.year - 1) + " YTD"
+        };
+      }
+
+      function financialSnapshot(monthIndex, monthNumber) {
+        if (monthIndex == null || !financialRowsByMonth[monthIndex] || !financialRowsByMonth[monthIndex].length) return null;
+        const totals = Array(10).fill(0);
+        const items = financialRowsByMonth[monthIndex].map(row => {
+          const values = row.slice(2, 12);
+          values.forEach((value, index) => { totals[index] += value; });
+          return {
+            groupIndex: row[1],
+            group: financialGroups[row[1]],
+            values,
+            metrics: financialMetrics(values, monthNumber)
+          };
+        });
+        const rankings = {};
+        Object.keys(financialMetricDefs).forEach(key => {
+          const definition = financialMetricDefs[key];
+          rankings[key] = items.filter(item => Number.isFinite(item.metrics[key])).sort((a, b) => {
+            const valueOrder = definition.direction * (a.metrics[key] - b.metrics[key]);
+            return valueOrder || String(a.group ? a.group.name : "").localeCompare(String(b.group ? b.group.name : ""), UI_LOCALE);
+          });
+        });
+        return { items, rankings, market: financialMetrics(totals, monthNumber) };
+      }
+
+      function financialRankings(snapshot) {
+        if (!snapshot) return {};
+        const universe = Number.isFinite(state.financialUniverse) ? snapshot.rankings.premium.slice(0, state.financialUniverse) : snapshot.items.slice();
+        const result = {};
+        Object.keys(financialMetricDefs).forEach(key => {
+          const definition = financialMetricDefs[key];
+          result[key] = universe.filter(item => Number.isFinite(item.metrics[key])).sort((a, b) => {
+            const valueOrder = definition.direction * (a.metrics[key] - b.metrics[key]);
+            return valueOrder || String(a.group ? a.group.name : "").localeCompare(String(b.group ? b.group.name : ""), UI_LOCALE);
+          });
+        });
+        return result;
+      }
+
+      function focusFinancialGroupIndex() {
+        const mapped = financialData.companyGroups && financialData.companyGroups[state.focusCompany];
+        if (Number.isInteger(mapped) && mapped >= 0) return mapped;
+        const company = companyByIndex[state.focusCompany];
+        const key = company ? "c:" + company.code : "";
+        const group = financialGroups.find(item => item.key === key);
+        return group ? group.index : -1;
+      }
+
+      function financialRankContext(currentRank, previousRank, previousValue, formatter) {
+        const parts = [];
+        if (previousRank != null) {
+          const movement = previousRank - currentRank;
+          parts.push(movement > 0 ? "ganhou " + movement + (movement === 1 ? " posição" : " posições") : movement < 0 ? "perdeu " + Math.abs(movement) + (movement === -1 ? " posição" : " posições") : "posição estável");
+        }
+        if (previousValue != null && Number.isFinite(previousValue)) parts.push("anterior " + formatter(previousValue));
+        return parts.length ? parts.join(" · ") : "sem comparável disponível";
+      }
+
+      function renderFinancial() {
+        const period = financialPeriod();
+        const current = financialSnapshot(period.index, period.month);
+        const previous = financialSnapshot(period.previousIndex, period.month);
+        const host = el("r4-financial-chart");
+        host.replaceChildren();
+        const focusGroupIndex = focusFinancialGroupIndex();
+        const cardConfig = [
+          ["premium", "r4-fin-premium", "r4-fin-premium-context"],
+          ["combined", "r4-fin-combined", "r4-fin-combined-context"],
+          ["profit", "r4-fin-profit", "r4-fin-profit-context"],
+          ["roe", "r4-fin-roe", "r4-fin-roe-context"]
+        ];
+        if (!current) {
+          cardConfig.forEach(([, valueId, contextId]) => {
+            el(valueId).textContent = "—";
+            el(contextId).textContent = "Período não incluído nesta versão compacta";
+          });
+          const empty = document.createElement("div");
+          empty.className = "r4-empty";
+          empty.textContent = "Os rankings financeiros deste preview estão disponíveis para o período mais recente. O HTML completo mantém a série desde 2019.";
+          host.appendChild(empty);
+          el("r4-financial-subtitle").textContent = period.label + " · período não disponível no preview compacto";
+          el("r4-financial-market").textContent = "—";
+          el("r4-financial-method").textContent = "Balanço SES · valores YTD";
+          return;
+        }
+        const currentRankings = financialRankings(current);
+        const previousRankings = financialRankings(previous);
+        cardConfig.forEach(([key, valueId, contextId]) => {
+          const definition = financialMetricDefs[key];
+          const ranking = currentRankings[key];
+          const currentRank = ranking.findIndex(item => item.groupIndex === focusGroupIndex) + 1;
+          const focus = ranking.find(item => item.groupIndex === focusGroupIndex);
+          const previousRanking = previous ? previousRankings[key] : [];
+          const previousRankIndex = previousRanking.findIndex(item => item.groupIndex === focusGroupIndex);
+          const previousFocus = previousRanking.find(item => item.groupIndex === focusGroupIndex);
+          el(valueId).textContent = focus ? "#" + currentRank + " · " + definition.format(focus.metrics[key]) : "—";
+          el(contextId).textContent = focus ? financialRankContext(currentRank, previousRankIndex >= 0 ? previousRankIndex + 1 : null, previousFocus ? previousFocus.metrics[key] : null, definition.format) : "grupo da seguradora foco sem base válida";
+        });
+
+        const selectedKey = state.financialMetric;
+        const definition = financialMetricDefs[selectedKey];
+        const ranking = currentRankings[selectedKey];
+        const limit = Number.isFinite(state.financialTop) ? state.financialTop : ranking.length;
+        let displayed = ranking.slice(0, limit);
+        const focusItem = ranking.find(item => item.groupIndex === focusGroupIndex);
+        if (focusItem && !displayed.some(item => item.groupIndex === focusGroupIndex)) displayed = displayed.concat([focusItem]);
+        if (!displayed.length) {
+          const empty = document.createElement("div");
+          empty.className = "r4-empty";
+          empty.textContent = "Nenhum grupo tem base válida para este indicador no período selecionado.";
+          host.appendChild(empty);
+          return;
+        }
+
+        const previousValues = new Map((previous ? previousRankings[selectedKey] : []).map(item => [item.groupIndex, item.metrics[selectedKey]]));
+        const width = Math.max(320, Math.floor(host.getBoundingClientRect().width || 736));
+        const mobile = width < 580;
+        const rowHeight = mobile ? 48 : 42;
+        const margin = { top: 54, right: mobile ? 96 : 142, bottom: 24, left: mobile ? 128 : 214 };
+        const height = margin.top + margin.bottom + displayed.length * rowHeight;
+        const values = displayed.flatMap(item => [item.metrics[selectedKey], previousValues.get(item.groupIndex)]).filter(Number.isFinite);
+        let minValue = Math.min(...values, 0);
+        let maxValue = Math.max(...values, 0);
+        if (minValue === maxValue) maxValue = minValue + 1;
+        const padding = (maxValue - minValue) * .06;
+        minValue -= padding;
+        maxValue += padding;
+        const plotWidth = Math.max(90, width - margin.left - margin.right);
+        const x = value => margin.left + (value - minValue) / (maxValue - minValue) * plotWidth;
+        const svg = svgEl("svg", { viewBox: "0 0 " + width + " " + height, role: "img", "aria-labelledby": "r4-fin-title r4-fin-desc" });
+        svg.appendChild(svgEl("title", { id: "r4-fin-title" }, "Ranking geral por " + definition.label));
+        svg.appendChild(svgEl("desc", { id: "r4-fin-desc" }, "Ranking de grupos econômicos no período selecionado; a seguradora foco aparece destacada e a marca vertical indica o mesmo período do ano anterior."));
+        [minValue, (minValue + maxValue) / 2, maxValue].forEach(tick => {
+          const tickX = x(tick);
+          svg.appendChild(svgEl("line", { x1: tickX, x2: tickX, y1: margin.top - 14, y2: height - margin.bottom, class: "r4-gridline" }));
+          svg.appendChild(svgEl("text", { x: tickX, y: 20, "text-anchor": "middle", class: "r4-axis text-small" }, definition.format(tick)));
+        });
+        displayed.forEach((item, displayIndex) => {
+          const rank = ranking.indexOf(item) + 1;
+          const y = margin.top + displayIndex * rowHeight + rowHeight / 2;
+          const isFocus = item.groupIndex === focusGroupIndex;
+          if (isFocus) svg.appendChild(svgEl("rect", { x: 0, y: y - rowHeight / 2 + 2, width, height: rowHeight - 4, class: "r4-focus-band" }));
+          svg.appendChild(svgEl("text", { x: margin.left - 10, y: y + 4, "text-anchor": "end", fill: "var(--foreground)", class: "text-small" }, "#" + rank + " · " + shortName(item.group ? item.group.name : "Grupo", mobile)));
+          svg.appendChild(svgEl("line", { x1: margin.left, x2: width - margin.right, y1: y, y2: y, class: "r4-fin-track" }));
+          const previousValue = previousValues.get(item.groupIndex);
+          if (Number.isFinite(previousValue)) svg.appendChild(svgEl("line", { x1: x(previousValue), x2: x(previousValue), y1: y - 8, y2: y + 8, class: "r4-fin-prev" }));
+          svg.appendChild(svgEl("circle", { cx: x(item.metrics[selectedKey]), cy: y, r: isFocus ? 6 : 5, class: isFocus ? "r4-fin-dot-focus" : "r4-fin-dot" }));
+          svg.appendChild(svgEl("text", { x: width - margin.right + 10, y: y + 4, fill: "var(--foreground)", class: "r4-data-label text-small" }, definition.format(item.metrics[selectedKey])));
+        });
+        host.appendChild(svg);
+        const focusGroup = financialGroups[focusGroupIndex];
+        el("r4-financial-subtitle").textContent = period.label + " × " + period.previousLabel + " · " + (focusGroup ? focusGroup.name : focusCompanyName()) + " em foco";
+        const universeLabel = Number.isFinite(state.financialUniverse) ? state.financialUniverse + " maiores grupos por prêmio emitido" : "todos os grupos com balanço";
+        el("r4-financial-ranking-subtitle").textContent = definition.label + " · " + universeLabel + " · " + (Number.isFinite(state.financialTop) ? "Top " + state.financialTop : "mostrar todos") + " · ponto atual, marca ano anterior";
+        el("r4-financial-market").textContent = "Mercado: " + definition.format(current.market[selectedKey]);
+        el("r4-financial-method").textContent = selectedKey === "roe" ? "ROE anualizado sobre PL de fechamento" : selectedKey === "combined" ? "Menor índice = melhor eficiência técnica" : "Maior valor = melhor posição no ranking";
+        Array.from(el("r4-financial-metrics").querySelectorAll("button")).forEach(button => {
+          const selected = button.dataset.financialMetric === selectedKey;
+          button.className = "btn" + (selected ? " btn-primary" : "");
+          button.setAttribute("aria-pressed", String(selected));
+        });
+      }
+
+      function updateSelectionSummary() {
+        const count = state.branches.size;
+        const companyCount = state.companies.size;
+        const product = currentProduct();
+        const subproduct = currentSubproduct();
+        el("r4-branch-count").textContent = count + (count === 1 ? " selecionado" : " selecionados");
+        el("r4-company-count").textContent = companyCount + (companyCount === 1 ? " selecionada" : " selecionadas");
+        el("r4-selection-summary").textContent = (product ? product.label + " / " + (subproduct ? subproduct.label : "seleção manual") + " · " : "") + count + (count === 1 ? " ramo" : " ramos") + " · " + companyCount + (companyCount === 1 ? " seguradora" : " seguradoras") + " · foco " + focusCompanyName();
+      }
+
+      function render() {
+        renderProductNavigation();
+        updateSelectionSummary();
+        const view = snapshot();
+        renderHeaderAndKpis(view);
+        renderTrend();
+        renderRanking(view);
+        renderInsights(view);
+        renderAdvanced(view);
+        renderTechnicalChart(view);
+        renderReinsuranceChart(view);
+        renderRatioKpis(view);
+        renderGrossNetChart(view);
+        renderRatioHistory(view);
+        renderTechnicalRanking(view);
+        renderProductBreakdown(view);
+        renderFinancial();
+      }
+
+      function updateMonthControl() {
+        const monthSelect = el("r4-month");
+        monthSelect.replaceChildren();
+        if (DATA.meta.previewDetailedStartYear && state.mode !== "annual" && state.year < DATA.meta.previewDetailedStartYear) {
+          state.year = DATA.meta.previewDetailedStartYear;
+          el("r4-year").value = String(state.year);
+        }
+        const maxMonth = availableMonth(state.year);
+        if (state.month > maxMonth) state.month = maxMonth;
+        for (let month = 1; month <= maxMonth; month += 1) {
+          const option = document.createElement("option");
+          option.value = String(month);
+          option.textContent = monthNames[month - 1];
+          option.selected = month === state.month;
+          monthSelect.appendChild(option);
+        }
+        monthSelect.disabled = state.mode === "annual";
+      }
+
+      function setTab(tab) {
+        state.tab = tab;
+        const executive = tab === "executive";
+        const kpis = tab === "kpis";
+        const ratios = tab === "ratios";
+        const productMix = tab === "products";
+        const financial = tab === "financial";
+        el("r4-panel-executive").hidden = !executive;
+        el("r4-panel-kpis").hidden = !kpis;
+        el("r4-panel-ratios").hidden = !ratios;
+        el("r4-panel-products").hidden = !productMix;
+        el("r4-panel-financial").hidden = !financial;
+        el("r4-tab-executive").setAttribute("aria-selected", String(executive));
+        el("r4-tab-kpis").setAttribute("aria-selected", String(kpis));
+        el("r4-tab-ratios").setAttribute("aria-selected", String(ratios));
+        el("r4-tab-products").setAttribute("aria-selected", String(productMix));
+        el("r4-tab-financial").setAttribute("aria-selected", String(financial));
+        el("r4-tab-executive").className = "btn" + (executive ? " btn-primary" : "");
+        el("r4-tab-kpis").className = "btn" + (kpis ? " btn-primary" : "");
+        el("r4-tab-ratios").className = "btn" + (ratios ? " btn-primary" : "");
+        el("r4-tab-products").className = "btn" + (productMix ? " btn-primary" : "");
+        el("r4-tab-financial").className = "btn" + (financial ? " btn-primary" : "");
+        if (executive) requestAnimationFrame(() => { renderTrend(); renderRanking(snapshot()); });
+        else if (kpis) requestAnimationFrame(() => { const view = snapshot(); renderTechnicalChart(view); renderReinsuranceChart(view); });
+        else if (ratios) requestAnimationFrame(() => { const view = snapshot(); renderGrossNetChart(view); renderRatioHistory(view); renderTechnicalRanking(view); });
+        else if (productMix) requestAnimationFrame(() => renderProductBreakdown(snapshot()));
+        else requestAnimationFrame(renderFinancial);
+      }
+
+      function populateControls() {
+        for (let year = startYear; year <= latestYear; year += 1) {
+          const option = document.createElement("option");
+          option.value = String(year);
+          option.textContent = year === latestYear && latestMonth < 12 ? year + " · até " + monthShort[latestMonth - 1] : String(year);
+          option.selected = year === state.year;
+          el("r4-year").appendChild(option);
+        }
+        updateMonthControl();
+        companyByIndex.forEach(company => {
+          if (company.aggregateMarket) return;
+          const focusOption = document.createElement("option");
+          focusOption.value = String(company.index);
+          focusOption.textContent = companyDisplayName(company) + " · " + company.code;
+          focusOption.selected = company.index === state.focusCompany;
+          el("r4-focus-company").appendChild(focusOption);
+          const option = document.createElement("option");
+          option.value = String(company.index);
+          option.textContent = companyDisplayName(company) + " · " + company.code;
+          option.selected = state.companies.has(company.index);
+          el("r4-company").appendChild(option);
+        });
+        branchByIndex.forEach(branch => {
+          const option = document.createElement("option");
+          option.value = String(branch.index);
+          option.textContent = branch.code + " · " + branch.name;
+          option.selected = state.branches.has(branch.index);
+          el("r4-branches").appendChild(option);
+        });
+        el("r4-latest-period").textContent = DATA.meta.latest.slice(4, 6) + "/" + DATA.meta.latest.slice(0, 4);
+        el("r4-footnote").textContent += " Base gerada em " + new Date(DATA.meta.generated).toLocaleString(UI_LOCALE) + "; " + DATA.meta.records.toLocaleString(UI_LOCALE) + " registros mensais agregados.";
+      }
+
+      el("r4-view-mode").addEventListener("change", event => { state.mode = event.target.value; updateMonthControl(); render(); });
+      el("r4-year").addEventListener("change", event => { state.year = Number(event.target.value); updateMonthControl(); render(); });
+      el("r4-month").addEventListener("change", event => { state.month = Number(event.target.value); render(); });
+      el("r4-metric").addEventListener("change", event => { state.metric = event.target.value; render(); });
+      el("r4-focus-company").addEventListener("change", event => {
+        const previousFocus = state.focusCompany;
+        const nextFocus = Number(event.target.value);
+        if (state.companies.size === 1) {
+          state.companies = new Set([nextFocus]);
+        } else if (!state.companies.has(nextFocus)) {
+          state.companies.delete(previousFocus);
+          state.companies.add(nextFocus);
+        }
+        state.focusCompany = nextFocus;
+        Array.from(el("r4-company").options).forEach(option => { option.selected = state.companies.has(Number(option.value)); });
+        render();
+      });
+      el("r4-company").addEventListener("change", event => {
+        const selected = new Set(Array.from(event.target.selectedOptions, option => Number(option.value)));
+        if (!selected.size) {
+          selected.add(state.focusCompany);
+        }
+        selected.add(state.focusCompany);
+        state.companies = selected;
+        Array.from(event.target.options).forEach(option => { option.selected = state.companies.has(Number(option.value)); });
+        render();
+      });
+      el("r4-top").addEventListener("change", event => { state.top = event.target.value === "all" ? Infinity : Number(event.target.value); render(); });
+      el("r4-min-premium").addEventListener("change", event => { state.minPremium = Number(event.target.value); render(); });
+      el("r4-loss-cap").addEventListener("change", event => { state.lossCap = event.target.value === "all" ? Infinity : Number(event.target.value); render(); });
+      el("r4-technical-view").addEventListener("change", event => { state.technicalView = event.target.value; renderTechnicalChart(snapshot()); });
+      el("r4-reinsurance-view").addEventListener("change", event => { state.reinsuranceView = event.target.value; renderReinsuranceChart(snapshot()); });
+      el("r4-ratio-history-view").addEventListener("change", event => { state.ratioHistoryView = event.target.value; renderRatioHistory(); });
+      el("r4-financial-top").addEventListener("change", event => { state.financialTop = event.target.value === "all" ? Infinity : Number(event.target.value); renderFinancial(); });
+      el("r4-financial-universe").addEventListener("change", event => { state.financialUniverse = event.target.value === "all" ? Infinity : Number(event.target.value); renderFinancial(); });
+      el("r4-financial-metrics").addEventListener("click", event => {
+        const button = event.target.closest("button[data-financial-metric]");
+        if (!button) return;
+        state.financialMetric = button.dataset.financialMetric;
+        renderFinancial();
+      });
+      el("r4-branches").addEventListener("change", event => {
+        state.branches = new Set(Array.from(event.target.selectedOptions, option => Number(option.value)));
+        state.subproductId = null;
+        aggregateCache.clear();
+        render();
+      });
+      el("r4-select-all").addEventListener("click", () => {
+        state.branches = new Set(branchByIndex.map(item => item.index));
+        if (productById.has("consolidated")) {
+          state.productId = "consolidated";
+          state.subproductId = "consolidated-total";
+        } else {
+          state.subproductId = null;
+        }
+        Array.from(el("r4-branches").options).forEach(option => { option.selected = true; });
+        aggregateCache.clear();
+        render();
+      });
+      el("r4-tab-executive").addEventListener("click", () => setTab("executive"));
+      el("r4-tab-kpis").addEventListener("click", () => setTab("kpis"));
+      el("r4-tab-ratios").addEventListener("click", () => setTab("ratios"));
+      el("r4-tab-products").addEventListener("click", () => setTab("products"));
+      el("r4-tab-financial").addEventListener("click", () => setTab("financial"));
+
+      let resizeFrame = null;
+      const rerenderOnResize = () => {
+        if (resizeFrame) cancelAnimationFrame(resizeFrame);
+        resizeFrame = requestAnimationFrame(() => {
+          const view = snapshot();
+          if (state.tab === "executive") {
+            renderTrend();
+            renderRanking(view);
+          } else if (state.tab === "kpis") {
+            renderTechnicalChart(view);
+            renderReinsuranceChart(view);
+          } else if (state.tab === "ratios") {
+            renderGrossNetChart(view);
+            renderRatioHistory(view);
+            renderTechnicalRanking(view);
+          } else if (state.tab === "products") {
+            renderProductBreakdown(view);
+          } else {
+            renderFinancial();
+          }
+        });
+      };
+      if (typeof ResizeObserver !== "undefined") new ResizeObserver(rerenderOnResize).observe(root);
+      else window.addEventListener("resize", rerenderOnResize);
+
+      populateControls();
+      render();
+    })();
+  </script>
+  <script>
+    (() => {
+      "use strict";
+      const root = document.getElementById("radar-susep-dashboard-v4");
+      if (!root) return;
+      const lang = new URLSearchParams(window.location.search).get("lang") === "en" ? "en" : "pt";
+      const ptButton = root.querySelector("#r4-lang-pt");
+      const enButton = root.querySelector("#r4-lang-en");
+      const chooseLanguage = nextLanguage => {
+        const url = new URL(window.location.href);
+        if (nextLanguage === "en") url.searchParams.set("lang", "en");
+        else url.searchParams.delete("lang");
+        window.location.assign(url.toString());
+      };
+      ptButton.addEventListener("click", () => chooseLanguage("pt"));
+      enButton.addEventListener("click", () => chooseLanguage("en"));
+      ptButton.setAttribute("aria-pressed", String(lang === "pt"));
+      enButton.setAttribute("aria-pressed", String(lang === "en"));
+      document.documentElement.lang = lang === "en" ? "en" : "pt-BR";
+      document.title = lang === "en"
+        ? "Brazilian Insurance Market Radar | Public SUSEP data"
+        : "Radar do Mercado Segurador Brasileiro | Dados públicos SUSEP";
+      if (lang !== "en") return;
+
+      const exact = new Map([
+        ["Radar do mercado segurador brasileiro · Dados públicos SES/SUSEP", "Brazilian insurance market radar · Public SES/SUSEP data"],
+        ["Panorama do mercado.", "Market overview."],
+        ["Seguradora em foco.", "Focus insurer."],
+        ["Leitura consolidada dos ramos selecionados, agora com visão anual, mensal e acumulada desde 2019.", "Consolidated view of the selected insurance lines, with annual, monthly and year-to-date analysis since 2019."],
+        ["BASE OFICIAL DISPONÍVEL ATÉ", "OFFICIAL DATA AVAILABLE THROUGH"],
+        ["Taxonomia baseada nas abas da análise de mercado", "Taxonomy based on the market analysis product structure"],
+        ["Indicadores do painel original · sempre visíveis", "Core dashboard indicators · always visible"],
+        ["Recorte executivo", "Executive scope"],
+        ["Visão temporal", "Time view"],
+        ["Métrica principal", "Primary metric"],
+        ["Seguradora Foco", "Focus insurer"],
+        ["Grupo econômico", "Economic group"],
+        ["Selecione uma ou mais seguradoras", "Select one or more insurers"],
+        ["Use Ctrl/Cmd para combinar seguradoras. A Seguradora Foco permanece como referência individual; as integrantes são consolidadas como grupo.", "Use Ctrl/Cmd to combine insurers. The focus insurer remains the individual benchmark; selected companies are consolidated as one group."],
+        ["Selecione um ou mais ramos", "Select one or more insurance lines"],
+        ["Selecionar todos os ramos", "Select all insurance lines"],
+        ["Use Ctrl/Cmd para combinar ramos. Os resultados são consolidados.", "Use Ctrl/Cmd to combine insurance lines. Results are consolidated."],
+        ["Prêmio mínimo no ranking", "Minimum premium in ranking"],
+        ["Sinistralidade máxima no ranking", "Maximum loss ratio in ranking"],
+        ["Sem mínimo", "No minimum"],
+        ["Mostrar todos", "Show all"],
+        ["Visão executiva", "Executive view"],
+        ["KPIs avançados", "Advanced KPIs"],
+        ["Performance técnica", "Technical performance"],
+        ["Mix de subprodutos", "Subproduct mix"],
+        ["Financial Rankings", "Financial rankings"],
+        ["Escala do mercado × participação × posição", "Market scale × share × position"],
+        ["Ranking competitivo", "Competitive ranking"],
+        ["Indicadores técnicos e de resseguro", "Technical and reinsurance indicators"],
+        ["Desempenho técnico", "Technical performance"],
+        ["Estrutura de resseguro", "Reinsurance structure"],
+        ["Ficha técnica do produto", "Product technical profile"],
+        ["Gross × Net Ratios", "Gross × net ratios"],
+        ["Evolução técnica", "Technical trend"],
+        ["Ranking técnico do produto", "Product technical ranking"],
+        ["Ranking geral", "Overall ranking"],
+        ["Indicador do ranking", "Ranking indicator"],
+        ["Universo do ranking", "Ranking universe"],
+        ["Quantidade exibida", "Number displayed"],
+        ["Ponto: período atual · marca: mesmo período do ano anterior", "Dot: current period · marker: same period in the previous year"],
+        ["Balanço SES · visão YTD por grupo econômico", "SES financial statements · YTD view by economic group"],
+        ["Anual", "Annual"],
+        ["Mês isolado", "Single month"],
+        ["Acumulado no ano", "Year to date"],
+        ["Ano", "Year"],
+        ["Mês", "Month"],
+        ["Prêmio direto", "Direct premium"],
+        ["Prêmio emitido", "Written premium"],
+        ["Prêmio ganho", "Earned premium"],
+        ["Índice combinado", "Combined ratio"],
+        ["Lucro líquido", "Net income"],
+        ["ROE anualizado", "Annualized ROE"],
+        ["Sinistralidade", "Loss ratio"],
+        ["Retenção estimada", "Estimated retention"],
+        ["Composite bruto", "Gross composite"],
+        ["Composite líquido estimado", "Estimated net composite"],
+        ["Claims bruto", "Gross claims"],
+        ["Claims líquido estimado", "Estimated net claims"],
+        ["Comm bruto", "Gross commission"],
+        ["Comm líquido estimado", "Estimated net commission"],
+        ["Resultado técnico líquido", "Net technical result"],
+        ["Sinistro ocorrido", "Incurred claims"],
+        ["Sinistro líquido de recuperação", "Claims net of recoveries"],
+        ["Despesa de resseguro", "Reinsurance expense"],
+        ["Receita de resseguro", "Reinsurance revenue"],
+        ["Despesa comercial", "Commercial expense"],
+        ["Cessão / prêmio emitido", "Cession / written premium"],
+        ["Comissão / prêmio emitido", "Commission / written premium"],
+        ["Indicador", "Indicator"],
+        ["Visualização", "View"],
+        ["Índices sobre prêmio emitido", "Ratios over written premium"],
+        ["Valores monetários", "Monetary values"],
+        ["Prêmio ganho e sinistros", "Earned premium and claims"],
+        ["50 maiores grupos", "Top 50 groups"],
+        ["Todos os grupos", "All groups"],
+        ["Todos", "All"],
+        ["Todas", "All"],
+        ["Seleção manual de ramos", "Manual insurance-line selection"],
+        ["Seleção manual", "Manual selection"],
+        ["Mercado total", "Total market"],
+        ["Consolidado", "Consolidated"],
+        ["Agronegócio", "Agribusiness"],
+        ["Aeronáutico", "Aviation"],
+        ["Infraestrutura", "Infrastructure"],
+        ["Outros", "Other"],
+        ["Aeronáutico total", "Total aviation"],
+        ["Agronegócio total", "Total agribusiness"],
+        ["Affinity total", "Total affinity"],
+        ["Cargo total", "Total cargo"],
+        ["DPVAT total", "Total DPVAT"],
+        ["Infraestrutura total", "Total infrastructure"],
+        ["P&C total", "Total P&C"],
+        ["Property total", "Total property"],
+        ["Surety total", "Total surety"],
+        ["Acidentes pessoais", "Personal accident"],
+        ["Animais", "Livestock and animals"],
+        ["Casco marítimo", "Marine hull"],
+        ["Crédito", "Credit"],
+        ["Empresarial", "Commercial property"],
+        ["Fiança locatícia", "Rental surety"],
+        ["Garantia setor privado", "Private-sector surety"],
+        ["Garantia setor público", "Public-sector surety"],
+        ["Garantia total", "Total surety bond"],
+        ["Hangar e satélites", "Hangar and satellites"],
+        ["Lucros cessantes e bancos", "Business interruption and banks"],
+        ["Operador portuário", "Port operator"],
+        ["Outras afinidades", "Other affinity"],
+        ["Outras responsabilidades", "Other liability"],
+        ["Outros patrimoniais", "Other property"],
+        ["Outros ramos", "Other insurance lines"],
+        ["Patrimonial rural", "Rural property"],
+        ["Pecuário", "Livestock"],
+        ["Penhor rural", "Rural pledge"],
+        ["Prestamista", "Credit life"],
+        ["RC transportador de carga", "Carrier liability"],
+        ["Residencial", "Homeowners"],
+        ["Responsabilidade civil geral", "General liability"],
+        ["Riscos cibernéticos", "Cyber risks"],
+        ["Riscos de engenharia", "Engineering risks"],
+        ["Riscos de petróleo", "Oil risks"],
+        ["Riscos diversos", "Miscellaneous risks"],
+        ["Riscos nomeados e operacionais", "Named and operational risks"],
+        ["Seguro agrícola", "Crop insurance"],
+        ["Seguro aquícola", "Aquaculture insurance"],
+        ["Seguro florestas", "Forestry insurance"],
+        ["Transporte internacional", "International cargo"],
+        ["Transporte nacional", "Domestic cargo"],
+        ["Vida", "Life"],
+        ["Vida do produtor rural", "Rural producer life"],
+        ["Mercado SUSEP completo, sem filtros internos por companhia", "Full SUSEP market, without internal company filters"],
+        ["Aeronáutico, infraestrutura, responsabilidade civil e patrimonial", "Aviation, infrastructure, liability and property"],
+        ["Agrícola, pecuário, aquícola, florestas e rural", "Crop, livestock, aquaculture, forestry and rural"],
+        ["Empresarial, riscos nomeados, operacionais e diversos", "Commercial property, named, operational and miscellaneous risks"],
+        ["Garantia, fiança, crédito e Financial Lines", "Surety, rental surety, credit and financial lines"],
+        ["Infraestrutura, petróleo, operações portuárias e marítimo", "Infrastructure, oil, port operations and marine"],
+        ["RETA, cascos, responsabilidade civil, hangar e satélites", "RETA, hull, liability, hangar and satellites"],
+        ["Ramos históricos e extintos do DPVAT", "Historical and discontinued DPVAT lines"],
+        ["Ramos não classificados nas famílias acima", "Insurance lines not classified in the families above"],
+        ["Residencial, pessoas, vida, prestamista e afinidades", "Homeowners, personal accident, life, credit life and affinity"],
+        ["Transportes nacional, internacional e RC do transportador", "Domestic and international cargo and carrier liability"],
+        ["Leituras executivas", "Executive insights"],
+        ["Gap de crescimento", "Growth gap"],
+        ["Representatividade", "Market relevance"],
+        ["Leitura de risco", "Risk view"],
+        ["Sem comparável", "No comparable period"],
+        ["Mercado em expansão.", "Market expanding."],
+        ["Mercado em contração.", "Market contracting."],
+        ["Mercado em perspectiva.", "Market under review."],
+        ["HISTÓRICO ANUAL + ACUMULADO CORRENTE", "ANNUAL HISTORY + CURRENT YTD"],
+        ["Posição e participação atuais", "Current position and market share"],
+        ["Base inicial da série", "First period in the series"],
+        ["Nenhuma seguradora atende aos filtros selecionados.", "No insurer matches the selected filters."],
+        ["Selecione ao menos um ramo para visualizar a série.", "Select at least one insurance line to view the series."],
+        ["Não há produção para os subprodutos deste recorte.", "No production data is available for the subproducts in this scope."],
+        ["Não há prêmio ganho suficiente para comparar a sinistralidade neste recorte.", "There is insufficient earned premium to compare the loss ratio in this scope."],
+        ["Menor índice = melhor eficiência técnica", "Lower ratio = better technical efficiency"],
+        ["Maior valor = melhor posição no ranking", "Higher value = better ranking position"],
+        ["ROE anualizado sobre PL de fechamento", "Annualized ROE over closing equity"],
+        ["Idioma do dashboard", "Dashboard language"],
+        ["Áreas do dashboard", "Dashboard sections"],
+        ["Produtos do mercado", "Market products"],
+        ["Subprodutos do produto selecionado", "Subproducts of the selected product"]
+      ]);
+
+      const phrases = [
+        ["Fonte dos dados:", "Data source:"],
+        ["Sistema de Estatísticas da SUSEP (SES), base FIP.", "SUSEP Statistics System (SES), FIP database."],
+        ["Painel independente elaborado a partir de dados públicos; não possui vínculo, chancela, patrocínio ou validação da SUSEP.", "Independent dashboard based on public data; it is not affiliated with, endorsed, sponsored or validated by SUSEP."],
+        ["Os dados podem ser revisados ou republicados pela fonte oficial.", "The source data may be revised or republished by the official source."],
+        ["Indicadores e rankings são cálculos do painel.", "Indicators and rankings are calculated by this dashboard."],
+        ["Valores nominais.", "Nominal values."],
+        ["Prêmio emitido da visão de produtos corresponde a premio_emitido2;", "Written premium in the product view corresponds to premio_emitido2;"],
+        ["o ranking financeiro utiliza a conta 6183 do quadro 23.", "the financial ranking uses account 6183 from table 23."],
+        ["Índice combinado =", "Combined ratio ="],
+        ["sinistros ocorridos", "incurred claims"],
+        ["custos de aquisição", "acquisition costs"],
+        ["outras receitas/despesas operacionais", "other operating income/expenses"],
+        ["resultado com resseguro", "reinsurance result"],
+        ["despesas administrativas", "administrative expenses"],
+        ["tributos", "taxes"],
+        ["prêmios ganhos", "earned premiums"],
+        ["lucro líquido", "net income"],
+        ["mês de referência", "reference month"],
+        ["patrimônio líquido de fechamento", "closing equity"],
+        ["seguem as fórmulas descritas neste painel.", "follow the formulas described in this dashboard."],
+        ["são apresentados por companhia para não consolidar entidades independentes.", "are shown by company to avoid consolidating independent entities."],
+        ["Base gerada em", "Dataset generated on"],
+        ["registros mensais agregados", "aggregated monthly records"],
+        ["Barras: mercado + Seguradora Foco", "Bars: market + focus insurer"],
+        ["Barras: mercado e seguradora foco", "Bars: market and focus insurer"],
+        ["linha superior: participação", "upper line: market share"],
+        ["linha inferior: posição", "lower line: position"],
+        ["linhas: participação e posição", "lines: market share and position"],
+        ["Barra: período atual", "Bar: current period"],
+        ["marca: período comparável", "marker: comparable period"],
+        ["rótulo: crescimento e sinistralidade", "label: growth and loss ratio"],
+        ["período e ramos selecionados", "selected period and insurance lines"],
+        ["Série histórica da seleção × mercado", "Historical series: selection × market"],
+        ["Seleção × mercado no período", "Selection × market for the period"],
+        ["Índices brutos e líquidos estimados · seleção × mercado", "Gross and estimated net ratios · selection × market"],
+        ["Participação no produto · mercado × seleção", "Product share · market × selection"],
+        ["Ordenado pela métrica principal", "Sorted by primary metric"],
+        ["nomes sem código SUSEP", "names without SUSEP code"],
+        ["grupo da seguradora foco sem base válida", "focus insurer group has no valid data"],
+        ["período não disponível no preview compacto", "period unavailable in the compact preview"],
+        ["todos os grupos com balanço", "all groups with financial statements"],
+        ["maiores grupos por prêmio emitido", "largest groups by written premium"],
+        ["mostrar todos", "show all"],
+        ["ponto atual, marca ano anterior", "current dot, previous-year marker"],
+        ["Mercado:", "Market:"],
+        ["do mercado no período comparável", "versus the market in the comparable period"],
+        ["do mercado no recorte selecionado", "of the market in the selected scope"],
+        ["do mercado", "of the market"],
+        ["vs período comparável", "vs comparable period"],
+        ["vs mercado", "vs market"],
+        ["em foco", "in focus"],
+        ["ganha tração", "gaining momentum"],
+        ["perde tração", "losing momentum"],
+        ["mantém a posição", "holds position"],
+        ["posição estável", "stable position"],
+        ["ganhou", "gained"],
+        ["perdeu", "lost"],
+        ["posição", "position"],
+        ["posições", "positions"],
+        ["participação", "market share"],
+        ["Sinistralidade histórica", "Historical loss ratio"],
+        ["Mercado · tracejado", "Market · dashed"],
+        ["Seguradora foco", "Focus insurer"],
+        ["SEGURADORA FOCO", "FOCUS INSURER"],
+        ["MERCADO", "MARKET"],
+        ["PRÊMIO EMITIDO", "WRITTEN PREMIUM"],
+        ["PRÊMIO DIRETO", "DIRECT PREMIUM"],
+        ["PRÊMIO GANHO", "EARNED PREMIUM"],
+        ["POSIÇÃO · PARTICIPAÇÃO", "POSITION · MARKET SHARE"],
+        ["SINISTRALIDADE", "LOSS RATIO"],
+        ["ramo selecionado", "insurance line selected"],
+        ["ramos selecionados", "insurance lines selected"],
+        ["ramos SUSEP consolidados", "consolidated SUSEP insurance lines"],
+        ["ramos SUSEP", "SUSEP insurance lines"],
+        ["ramo", "insurance line"],
+        ["ramos", "insurance lines"],
+        ["selecionada", "selected"],
+        ["selecionadas", "selected"],
+        ["selecionado", "selected"],
+        ["selecionados", "selected"],
+        ["Acumulado mês a mês", "Cumulative month by month"],
+        ["ACUMULADO MÊS A MÊS", "CUMULATIVE MONTH BY MONTH"],
+        ["até", "through"],
+        ["Mercado", "Market"]
+      ].sort((a, b) => b[0].length - a[0].length);
+
+      const translate = value => {
+        if (!value || !value.trim()) return value;
+        const leading = value.match(/^\s*/)[0];
+        const trailing = value.match(/\s*$/)[0];
+        let translated = exact.get(value.trim()) || value.trim();
+        phrases.forEach(([from, to]) => { translated = translated.split(from).join(to); });
+        return leading + translated + trailing;
+      };
+      const translateNode = node => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const next = translate(node.nodeValue);
+          if (next !== node.nodeValue) node.nodeValue = next;
+          return;
+        }
+        if (node.nodeType !== Node.ELEMENT_NODE) return;
+        ["aria-label", "title"].forEach(attribute => {
+          if (!node.hasAttribute(attribute)) return;
+          const value = node.getAttribute(attribute);
+          const next = translate(value);
+          if (next !== value) node.setAttribute(attribute, next);
+        });
+        node.childNodes.forEach(translateNode);
+      };
+      translateNode(root);
+      let translating = false;
+      new MutationObserver(records => {
+        if (translating) return;
+        translating = true;
+        records.forEach(record => {
+          if (record.type === "characterData") translateNode(record.target);
+          else record.addedNodes.forEach(translateNode);
+        });
+        translating = false;
+      }).observe(root, { subtree: true, childList: true, characterData: true });
+    })();
+  </script>
+</div>
